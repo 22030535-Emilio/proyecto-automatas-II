@@ -1,0 +1,20 @@
+// Página personal de prueba
+TITULO "Mi perfil";
+
+SECCION
+    TITULO "PROYECTO DE LENGUAJES Y AUTOMATAS II";
+    PARRAFO "somos el equipo 10";
+
+    PARRAFO "Bienvenido a mi sitio";
+
+    PARRAFO "Soy un estudiante de ingeniería.";
+    
+    LISTA
+        ELEMENTO "Proyectos";
+        ELEMENTO "Blog"
+        SUBLISTA
+            ELEMENTO "2024";
+            ELEMENTO "2025";
+        ; 
+    ;
+;
