@@ -1,0 +1,9 @@
+// Error Semántico: Contexto inválido
+TITULO "Mi página";
+
+ELEMENTO "Este elemento está fuera de una lista"; // Error: ELEMENTO debe estar dentro de LISTA
+SUBLISTA { // Error: SUBLISTA debe estar dentro de ELEMENTO
+    ELEMENTO "Prueba";
+}
+
+COMANDO_INEXISTENTE "Esto no existe"; // Error: Comando no válido

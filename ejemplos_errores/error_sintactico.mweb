@@ -1,0 +1,4 @@
+// Error Sintáctico: Orden incorrecto de tokens
+TITULO ; // Falta la cadena de texto obligatoria
+PARRAFO "Hola" TITULO "Mundo"; // Falta el punto y coma entre comandos
+; // Punto y coma huérfano sin comando previo para cerrar

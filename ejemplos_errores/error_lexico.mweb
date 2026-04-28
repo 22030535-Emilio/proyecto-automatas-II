@@ -1,0 +1,5 @@
+// Error Léxico: Uso de caracteres no permitidos como '$' y '@'
+TITULO "Prueba de error";
+$ variable = 10;
+PARRAFO "Este archivo tiene un símbolo $ que el lexer no reconoce.";
+@otro_error;
