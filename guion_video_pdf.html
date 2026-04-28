@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guion de Exposición (40 Minutos) - Proyecto Autómatas II</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --text-color: #333;
+            --accent-color: #2c3e50;
+            --time-color: #e67e22;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace; /* Script style font */
+            line-height: 1.5;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 25mm;
+            margin: 20px auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        @media print {
+            body { background: none; }
+            .page { margin: 0; box-shadow: none; page-break-after: always; }
+            .no-print { display: none; }
+        }
+
+        .btn-print {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--accent-color);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+
+        h1 { font-size: 1.5rem; margin: 0; text-transform: uppercase; }
+        h2 { font-size: 1.2rem; margin: 10px 0; color: var(--accent-color); }
+
+        .scene {
+            margin-top: 30px;
+            border-left: 4px solid var(--time-color);
+            padding-left: 20px;
+        }
+
+        .time-mark {
+            color: var(--time-color);
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .instruction {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .dialogue {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .bullet-list {
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 25mm;
+            left: 25mm;
+            right: 25mm;
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="no-print btn-print" onclick="window.print()">Guardar como PDF</button>
+
+    <div class="page">
+        <header>
+            <h1>GUION TÉCNICO DE EXPOSICIÓN</h1>
+            <h2>Proyecto: Traductor MiniWebLang (Autómatas II)</h2>
+            <p><strong>Duración Estimada:</strong> 40 Minutos | <strong>Equipo:</strong> 10</p>
+        </header>
+
+        <div class="scene">
+            <span class="time-mark">[00:00 - 04:00] BLOQUE 1: INTRODUCCIÓN Y CONTEXTO</span>
+            <span class="instruction">(Cámara enfocando al equipo o diapositiva de portada)</span>
+            <div class="dialogue">
+                - Presentación de los integrantes y el rol de cada uno.<br>
+                - Definición del proyecto: Traductor de lenguaje de marcado simplificado a HTML5.<br>
+                - Motivación: ¿Por qué crear un lenguaje nuevo? Facilitar la estructura web sin perder el rigor formal de los autómatas.
+            </div>
+        </div>
+
+        <div class="scene">
+            <span class="time-mark">[04:00 - 12:00] BLOQUE 2: FUNDAMENTOS TEÓRICOS</span>
+            <span class="instruction">(Mostrar la Documentación Maestra V4 - Sección de Gramática)</span>
+            <div class="dialogue">
+                - Explicación de la Gramática Independiente del Contexto (GIC).<br>
+                - Definición de la 7-tupla del Autómata de Pila (PDA).<br>
+                - Explicación de por qué se usa una matriz de transiciones: Eficiencia O(n) y eliminación de condicionales innecesarios.
+            </div>
+        </div>
+
+        <div class="scene">
+            <span class="time-mark">[12:00 - 18:00] BLOQUE 3: EL ANALIZADOR LÉXICO (LEXER)</span>
+            <span class="instruction">(Compartir pantalla mostrando lexer.py)</span>
+            <div class="dialogue">
+                - Mostrar el mapeo de caracteres ASCII a clases de equivalencia.<br>
+                - Explicar la lógica del autómata finito para reconocer tokens.<br>
+                - <strong>DEMO:</strong> Ingresar caracteres inválidos en el Dashboard y mostrar la detección de errores léxicos en tiempo real.
+            </div>
+        </div>
+
+        <footer>Página 1 de 2 - Guion MiniWebLang</footer>
+    </div>
+
+    <div class="page">
+        <div class="scene">
+            <span class="time-mark">[18:00 - 28:00] BLOQUE 4: EL AUTÓMATA DE PILA (PARSER)</span>
+            <span class="instruction">(Compartir pantalla mostrando parser_stack.py)</span>
+            <div class="dialogue">
+                - Explicar el uso de la pila (Stack) para manejar anidamientos (Listas dentro de Secciones, etc).<br>
+                - Detallar las reglas semánticas: Un elemento de lista debe estar dentro de un contenedor UL.<br>
+                - <strong>DEMO:</strong> Mostrar errores sintácticos (falta de punto y coma) y errores semánticos (contexto incorrecto).
+            </div>
+        </div>
+
+        <div class="scene">
+            <span class="time-mark">[28:00 - 33:00] BLOQUE 5: COMPONENTES INTERNOS</span>
+            <span class="instruction">(Mostrar components.py y la tabla de símbolos en el navegador)</span>
+            <div class="dialogue">
+                - Explicación de la Tabla de Símbolos: Registro de comandos y líneas de ocurrencia.<br>
+                - Gestión de Errores: Cómo funciona el acumulador de fallos y la recuperación de pánico.
+            </div>
+        </div>
+
+        <div class="scene">
+            <span class="time-mark">[33:00 - 40:00] BLOQUE 6: INTERFAZ Y CIERRE</span>
+            <span class="instruction">(Navegar por el Dashboard y mostrar el HTML generado)</span>
+            <div class="dialogue">
+                - Mostrar la integración de Flask con el Analizador.<br>
+                - Ejecución de un ejemplo completo y complejo que use todas las etiquetas.<br>
+                - Conclusiones: Aprendizajes sobre compiladores y planes futuros para el lenguaje.
+            </div>
+        </div>
+
+        <div class="dialogue" style="margin-top: 50px; text-align: center; font-weight: bold;">
+            FIN DE LA EXPOSICIÓN
+        </div>
+
+        <footer>Página 2 de 2 - Guion MiniWebLang</footer>
+    </div>
+
+</body>
+</html>
