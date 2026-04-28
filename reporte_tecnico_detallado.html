@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Especificación Técnica - Traductor MiniWebLang</title>
+    <style>
+        :root {
+            --primary: #1e293b;
+            --secondary: #334155;
+            --accent: #3b82f6;
+            --code-bg: #f8fafc;
+            --border: #e2e8f0;
+        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.6; color: var(--primary); margin: 0; padding: 0; }
+        .page { max-width: 900px; margin: 40px auto; padding: 60px; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 8px; margin-top: 40px; }
+        .cover { text-align: center; height: 800px; display: flex; flex-direction: column; justify-content: center; border: 10px solid var(--primary); margin-bottom: 50px; }
+        .cover h1 { font-size: 3.5rem; border: none; margin: 0; }
+        .cover p { font-size: 1.2rem; color: var(--secondary); }
+        
+        .matrix-table { width: 100%; border-collapse: collapse; font-family: 'Courier New', Courier, monospace; font-size: 0.8rem; margin: 20px 0; }
+        .matrix-table th, .matrix-table td { border: 1px solid var(--border); padding: 8px; text-align: center; }
+        .matrix-table th { background: var(--code-bg); }
+        
+        pre { background: var(--code-bg); padding: 20px; border-radius: 8px; overflow-x: auto; font-size: 0.9rem; border: 1px solid var(--border); }
+        code { color: #d63384; }
+        
+        .diagram { background: #fff; border: 1px solid var(--border); padding: 20px; margin: 20px 0; border-radius: 8px; text-align: center; }
+        .error-cat { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; margin: 20px 0; }
+        .error-cat div { padding: 15px; border: 1px solid var(--border); border-radius: 8px; }
+        .error-cat .label { font-weight: bold; background: var(--code-bg); }
+        
+        @media print {
+            .page { box-shadow: none; margin: 0; max-width: 100%; }
+            .no-print { display: none; }
+            h1, h2, h3 { page-break-after: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page">
+        <!-- PORTADA -->
+        <div class="cover">
+            <p>INSTITUTO TECNOLÓGICO DE MÉXICO</p>
+            <h1>MINIWEBLANG</h1>
+            <p>Reporte Técnico de Arquitectura y Análisis</p>
+            <div style="margin-top: 100px;">
+                <p><strong>Materia:</strong> Lenguajes y Autómatas II</p>
+                <p><strong>Equipo:</strong> 10</p>
+                <p><strong>Integrantes:</strong> Emilio (22030535)</p>
+                <p><strong>Fecha:</strong> 28 de Abril de 2026</p>
+            </div>
+        </div>
+
+        <!-- 1. TABLA DE SIMBOLOS -->
+        <h2>1. Diseño de la Tabla de Símbolos</h2>
+        <p>
+            La Tabla de Símbolos se ha implementado como una estructura de diccionario (Hash Map) optimizada para búsquedas rápidas (O(1)). Su función principal es registrar cada identificador (comando) encontrado y rastrear su contexto de uso.
+        </p>
+        <div class="diagram">
+            <strong>Estructura de Datos:</strong><br>
+            <code>{ "LEXEMA": { "kind": "TIPO", "occurrences": [L1, L2, ...] } }</code>
+        </div>
+        <p><strong>Lógica de Inserción:</strong></p>
+        <pre>
+def insert(self, name, kind, line):
+    if name not in self.symbols:
+        self.symbols[name] = {"kind": kind, "occurrences": [line]}
+    else:
+        self.symbols[name]["occurrences"].append(line)
+        </pre>
+
+        <!-- 2. PILA DE ERRORES -->
+        <h2>2. Diseño de la Pila de Errores</h2>
+        <p>
+            Se utiliza una clase <code>ErrorPile</code> que actúa como un acumulador de objetos <code>ErrorEntry</code>. Esta estructura permite que el traductor no se detenga ante el primer fallo, sino que recolecte todos los errores encontrados para presentarlos al usuario al final del proceso de análisis.
+        </p>
+        <div class="diagram">
+            <strong>Atributos de un Error:</strong><br>
+            [Código de Error] | [Mensaje Descriptivo] | [Línea] | [Columna]
+        </div>
+
+        <!-- 3. AUTOMATAS Y GRAFOS -->
+        <h2>3. Autómatas y sus Grafos</h2>
+        
+        <h3>3.1 Autómata Finito (Lexer)</h3>
+        <p>Maneja el análisis léxico mediante una matriz de transiciones de 10 columnas (clases de caracteres) por 10 estados.</p>
+        <table class="matrix-table">
+            <tr><th>E/C</th><th>LTR</th><th>DIG</th><th>QUO</th><th>PSC</th><th>SLH</th><th>SPC</th><th>NL</th></tr>
+            <tr><td>Q0</td><td>Q1</td><td>Err</td><td>Q2</td><td>Q7</td><td>Q4</td><td>Q0</td><td>Q0</td></tr>
+            <tr><td>Q1</td><td>Q1</td><td>Q1</td><td>Acc</td><td>Acc</td><td>Acc</td><td>Acc</td><td>Acc</td></tr>
+            <tr><td>Q2</td><td>Q2</td><td>Q2</td><td>Q3</td><td>Q2</td><td>Q2</td><td>Q2</td><td>Err</td></tr>
+        </table>
+        <p><em>(Simplificación: Q1=Comando, Q2=Cadenas, Q4=Comentarios, Q7=PuntoComa)</em></p>
+
+        <h3>3.2 Autómata de Pila (Parser)</h3>
+        <p>
+            El PDA utiliza una pila para validar el anidamiento. Por ejemplo, al encontrar <code>LISTA</code>, apila <code>ul</code>. Al encontrar <code>;</code>, desapila el tope. Si el tope no coincide con la estructura esperada, se dispara un error semántico.
+        </p>
+
+        <!-- 4. CODIGO FUENTE CRITICO -->
+        <h2>4. Código Fuente (Análisis por Matriz)</h2>
+        <p>La parte más innovadora es el motor de estados sin sentencias <code>if</code>, utilizando mapeo directo:</p>
+        <pre>
+# Transición en el Lexer
+char_class = self.CHAR_MAP[ord(char)]
+next_state = self.MATRIX[state][char_class]
+
+# Transición en el Parser
+row = self.MATRIX.get(self.state, {})
+transition = row.get(token.type, (99, 'E_SYNTAX'))
+        </pre>
+
+        <!-- 5. AVANCE DE INTERFACE -->
+        <h2>5. Avance de la Interface (Dashboard)</h2>
+        <p>
+            La interface actual es un dashboard web responsivo que incluye:
+        </p>
+        <ul>
+            <li><strong>Editor:</strong> Con soporte para tabulación y placeholder de ejemplo.</li>
+            <li><strong>Preview:</strong> Renderizado en tiempo real del HTML generado dentro de un iframe.</li>
+            <li><strong>Tabs de Datos:</strong> Visualización dinámica de la Tabla de Símbolos y la Pila de Errores mediante AJAX/Fetch.</li>
+        </ul>
+
+        <!-- 6. CATEGORIZACION DE ERRORES -->
+        <h2>6. Categorización de los Errores</h2>
+        <div class="error-cat">
+            <div class="label">L001 (Léxico)</div>
+            <div>Caracteres no reconocidos por el alfabeto o cadenas mal cerradas.</div>
+            
+            <div class="label">P001 (Sintáctico)</div>
+            <div>Secuencia de tokens que no sigue la gramática (ej. dos puntos y coma seguidos).</div>
+            
+            <div class="label">S001 (Semántico)</div>
+            <div>Violación de reglas de contexto (ej. <code>ELEMENTO</code> fuera de una <code>LISTA</code>).</div>
+            
+            <div class="label">C001 (Comando)</div>
+            <div>Uso de una palabra reservada que no existe en el diccionario del lenguaje.</div>
+        </div>
+
+        <!-- 7. PLAN DE VIDEO -->
+        <h2>7. Plan de Demostración (Video)</h2>
+        <p>Para el video de 20 minutos, se sugiere el siguiente guion:</p>
+        <ol>
+            <li><strong>00:00 - 03:00:</strong> Introducción y presentación del equipo/proyecto.</li>
+            <li><strong>03:00 - 08:00:</strong> Explicación del Lexer (Matriz de Transiciones) y demostración de Errores Léxicos.</li>
+            <li><strong>08:00 - 13:00:</strong> Explicación del Parser PDA (Pila y Gramática) y demostración de Errores Sintácticos/Semánticos.</li>
+            <li><strong>13:00 - 17:00:</strong> Tour por el código fuente (Partes críticas mostradas arriba).</li>
+            <li><strong>17:00 - 20:00:</strong> Demostración de la Interface Web y proceso de compilación completo.</li>
+        </ol>
+
+        <footer>
+            <p style="text-align: center; color: #777;">&copy; 2026 Equipo 10 - Lenguajes y Autómatas II</p>
+        </footer>
+    </div>
+
+</body>
+</html>
