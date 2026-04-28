@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniWebLang Dashboard | Automatas II</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <span class="accent">Mini</span>WebLang <small>v2.0 (Matrix Edition)</small>
+            </div>
+            <div class="header-actions">
+                <button id="compile-btn" class="primary-btn">Compilar y Ejecutar</button>
+            </div>
+        </header>
+
+        <main>
+            <div class="editor-section">
+                <div class="section-header">
+                    <h3>Editor de Código</h3>
+                </div>
+                <div class="editor-wrapper">
+                    <textarea id="code-editor" spellcheck="false" placeholder="// Escribe tu código MiniWebLang aquí...
+TITULO \"Hola Mundo\";
+SECCION {
+    PARRAFO \"Bienvenido al equipo 10\";
+}"></textarea>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="preview">Vista Previa HTML</button>
+                    <button class="tab-btn" data-tab="symbols">Tabla de Símbolos</button>
+                    <button class="tab-btn" data-tab="errors">Pila de Errores</button>
+                </div>
+
+                <div class="tab-content active" id="preview-tab">
+                    <div class="iframe-wrapper">
+                        <iframe id="html-preview"></iframe>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="symbols-tab">
+                    <table id="symbol-table">
+                        <thead>
+                            <tr>
+                                <th>Lexema</th>
+                                <th>Tipo</th>
+                                <th>Líneas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Symbols go here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tab-content" id="errors-tab">
+                    <div id="error-stack" class="error-stack">
+                        <!-- Errors go here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

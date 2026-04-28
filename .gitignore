@@ -1,3 +1,4 @@
+# Ignorar archivos de caché y entornos
 __pycache__/
 *.py[cod]
 *$py.class
@@ -5,9 +6,9 @@ __pycache__/
 .venv
 env/
 venv/
-*.html
-!test.html
-!informe_proyecto.html
-!avance_proyecto.html
-!reporte_tecnico.html
-!reporte_tecnico_detallado.html
+
+# Asegurar que se incluyan las plantillas y reportes
+!templates/
+!static/
+!docs/
+!ejemplos_errores/
