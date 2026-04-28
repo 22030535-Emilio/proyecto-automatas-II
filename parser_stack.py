@@ -4,146 +4,166 @@ from html_generator import HTMLGenerator
 
 class ParserPDA:
     """
-    Autómata de Pila (PDA) formal manejado por Matriz de Transiciones.
-    El estado cambia según el token y el tope de la pila.
+    Autómata de Pila (PDA) formal manejado por Matriz de Transiciones estricta sin ifs.
     """
     def __init__(self, tokens, error_pile):
-        self.tokens = tokens
+        from lexer import Token
+        self.tokens = tokens + [Token('EOF', '', -1, -1)]
         self.error_pile = error_pile
         self.stack = ['#']
-        self.state = 0 # Q0: Inicio
+        self.state = 0
         self.symbol_table = SymbolTable()
         self.html = HTMLGenerator()
         self.pos = 0
-        
-        # Auxiliares
         self.temp_val = None
         self.temp_param1 = None
 
         # MATRIZ DE TRANSICIÓN
-        # [Estado][TipoToken] -> (PróximoEstado, AcciónID)
+        # [Estado][TipoToken] -> (NuevoEstado, AccionID)
         self.MATRIX = {
-            0: { # Q0: Esperando comando o cierre
-                'COMANDO': (0, 'A_CMD'), # El estado destino real lo determinará el tipo de comando en la acción
+            0: {
+                'COMANDO': (0, 'A_CMD'), 
                 'PUNTOCOMA': (0, 'A_POP'),
                 'LLAVE_C': (0, 'A_POP'),
-                'EOF': (99, 'A_NOP')
+                'EOF': (99, 'A_FINISH')
             },
-            1: { # Q_WAIT_VAL: Esperando cadena de texto
+            1: {
                 'CADENA': (2, 'A_TEXT'),
             },
-            2: { # Q_WAIT_SEMI: Esperando punto y coma o cierre
+            2: {
                 'PUNTOCOMA': (0, 'A_POP'),
                 'COMANDO': (0, 'A_IMPLICIT_POP'),
                 'LLAVE_C': (0, 'A_IMPLICIT_POP'),
+                'EOF': (99, 'A_FINISH')
             },
-            3: { # Q_WAIT_P1: Enlace/Imagen (URL)
+            3: {
                 'CADENA': (4, 'A_SAVE_P1'),
             },
-            4: { # Q_WAIT_P2: Enlace/Imagen (Texto/Alt)
+            4: {
                 'CADENA': (2, 'A_FINISH_P2'),
             },
-            5: { # Q_WAIT_VAL_OPT: Elemento (Texto opcional)
+            5: {
                 'CADENA': (2, 'A_TEXT'),
-                'COMANDO': (0, 'A_NOP'),
+                'COMANDO': (0, 'A_IMPLICIT_POP'),
                 'PUNTOCOMA': (0, 'A_NOP'),
+                'EOF': (99, 'A_FINISH')
             }
         }
 
+        # Despachador de funciones para acciones
+        self.DISPATCHER = {
+            'A_CMD': self._action_command,
+            'A_POP': self._action_pop,
+            'A_IMPLICIT_POP': self._action_implicit_pop,
+            'A_TEXT': self._action_text,
+            'A_SAVE_P1': self._action_save_p1,
+            'A_FINISH_P2': self._action_finish_p2,
+            'A_NOP': lambda t: None,
+            'A_FINISH': lambda t: None,
+            'E_SYNTAX': self._action_error
+        }
+
+        # Tabla estricta de comportamientos por comando
+        self.CMD_RULES = {
+            'TITULO': {'tag': 'h1', 'push': 'h1', 'next': 1},
+            'ENCABEZADO': {'tag': 'h2', 'push': 'h2', 'next': 1},
+            'PARRAFO': {'tag': 'p', 'push': 'p', 'next': 1},
+            'BOTON': {'tag': 'button', 'push': 'button', 'next': 1},
+            'LISTA': {'tag': 'ul', 'push': 'ul', 'next': 0},
+            'SECCION': {'tag': 'section', 'push': 'section', 'next': 0},
+            'ELEMENTO': {'tag': 'li', 'push': 'li', 'next': 5, 'require_top': 'ul', 'implicit_close': 'li'},
+            'SUBLISTA': {'tag': 'ul', 'push': 'ul', 'next': 0, 'require_top': 'li'},
+            'ENLACE': {'next': 3, 'special': True},
+            'IMAGEN': {'next': 3, 'special': True}
+        }
+
     def parse(self):
-        while self.pos < len(self.tokens):
+        # El while comprueba que no estemos en estado final ni fuera de límites
+        while self.state != 99 and self.pos < len(self.tokens):
             token = self.tokens[self.pos]
             t_type = token.type
             
-            # Buscar en matriz
+            # Obtener transición sin IF
             row = self.MATRIX.get(self.state, {})
-            transition = row.get(t_type)
+            transition = row.get(t_type, (99, 'E_SYNTAX'))
             
-            if transition:
-                next_state, action_id = transition
-                
-                # Ejecutar acción y obtener estado resultante (si la acción lo define)
-                act_result = self._execute_action(action_id, token)
-                
-                # Avanzar puntero a menos que sea una acción que requiere reprocesar
-                if action_id not in ['A_IMPLICIT_POP', 'A_NOP']:
-                    self.pos += 1
-                
-                # Actualizar estado (prioridad al resultado de la acción para comandos)
-                self.state = act_result if act_result is not None else next_state
-            else:
-                # Error Sintáctico
-                self.error_pile.push("P001", f"Error Sintáctico: Token {t_type} no esperado en estado {self.state}", token.line, token.column)
-                self.pos += 1
-                self.state = 0 # Recuperación básica
-
-        # Cierre final de pila
-        while len(self.stack) > 1:
-            top = self.stack.pop()
-            self.html.close_tag(top)
+            next_state, action_id = transition
+            
+            # Ejecutar función sin IF
+            act_func = self.DISPATCHER.get(action_id, lambda t: None)
+            act_result = act_func(token)
+            
+            # Actualizar estado usando el resultado (si lo hubo) o el siguiente
+            self.state = {True: act_result, False: next_state}.get(act_result is not None)
+            
+            # Decidir si avanza el puntero de pos sin IF
+            advance = {'A_IMPLICIT_POP': 0, 'A_NOP': 0, 'E_SYNTAX': 1}.get(action_id, 1)
+            self.pos += advance
 
         return self.html.generate_full_html()
 
-    def _execute_action(self, action_id, token):
-        if action_id == 'A_CMD':
-            return self._action_command(token)
-        elif action_id == 'A_POP':
-            self._action_pop()
-        elif action_id == 'A_IMPLICIT_POP':
-            self._action_pop()
-        elif action_id == 'A_TEXT':
-            self.html.add_text(token.value)
-        elif action_id == 'A_SAVE_P1':
-            self.temp_param1 = token.value
-        elif action_id == 'A_FINISH_P2':
-            self._action_multi_param(token)
-        elif action_id == 'A_NOP':
-            pass
+    def _action_error(self, token):
+        self.error_pile.push("P001", f"Error Sintáctico: Token {token.type} no esperado", token.line, token.column)
+        return 0 # Recuperación forzada a 0
+
+    def _action_implicit_pop(self, token):
+        self._action_pop(token)
+        return 0
+
+    def _action_text(self, token):
+        self.html.add_text(token.value)
+        return None
+
+    def _action_save_p1(self, token):
+        self.temp_param1 = token.value
+        return None
+
+    def _action_finish_p2(self, token):
+        cmds = {
+            'ENLACE': lambda: self.html.open_tag('a', {'href': self.temp_param1}) or self.html.add_text(token.value) or self.stack.append('a'),
+            'IMAGEN': lambda: self.html.open_tag('img', {'src': self.temp_param1, 'alt': token.value}, self_closing=True)
+        }
+        res_func = cmds.get(self.temp_val, lambda: None)
+        res_func()
         return None
 
     def _action_command(self, token):
         cmd = token.value
         self.symbol_table.insert(cmd, "COMMAND", token.line)
         
-        if cmd in ['TITULO', 'ENCABEZADO', 'PARRAFO', 'BOTON']:
-            tag = COMMAND_MAP[cmd]
-            self.html.open_tag(tag)
-            self.stack.append(tag)
-            return 1 # Q_WAIT_VAL
-        elif cmd in ['LISTA', 'SECCION']:
-            tag = COMMAND_MAP[cmd]
-            self.html.open_tag(tag)
-            self.stack.append(tag)
-            return 0 # Q0
-        elif cmd == 'ELEMENTO':
-            if self.stack[-1] == 'li':
-                self.stack.pop()
-                self.html.close_tag('li')
-            if self.stack[-1] != 'ul':
-                self.error_pile.push("S001", "ELEMENTO fuera de LISTA", token.line, token.column)
-            self.html.open_tag('li')
-            self.stack.append('li')
-            return 5 # Q_WAIT_VAL_OPT
-        elif cmd == 'SUBLISTA':
-            if self.stack[-1] != 'li':
-                self.error_pile.push("S002", "SUBLISTA fuera de ELEMENTO", token.line, token.column)
-            self.html.open_tag('ul')
-            self.stack.append('ul')
-            return 0
-        elif cmd in ['ENLACE', 'IMAGEN']:
-            self.temp_val = cmd
-            return 3 # Q_WAIT_P1
-        return 0
+        conf = self.CMD_RULES.get(cmd, {})
+        
+        # Validar error de comando inexistente sin IF usando diccionarios
+        error_val = {True: None, False: "C001"}.get(bool(conf))
+        err_func = {
+            "C001": lambda: self.error_pile.push("C001", f"Comando {cmd} no válido", token.line, token.column)
+        }.get(error_val, lambda: None)
+        err_func()
+        
+        # Manejo de cierre implícito en la pila
+        implicit_close = conf.get('implicit_close')
+        close_needed = implicit_close == self.stack[-1]
+        close_func = {True: lambda: self._action_pop(token), False: lambda: None}.get(close_needed)
+        close_func()
+        
+        # Validación de Pila (Require top)
+        req_top = conf.get('require_top')
+        is_invalid = req_top is not None and self.stack[-1] != req_top
+        invalid_func = {True: lambda: self.error_pile.push("S001", f"{cmd} debe estar dentro de {req_top}", token.line, token.column), False: lambda: None}.get(is_invalid)
+        invalid_func()
+        
+        # Apertura de etiquetas
+        is_special = conf.get('special', False)
+        # Operadores booleanos cortos para decidir funciones
+        tag = conf.get('tag')
+        tag_func = {True: lambda: None, False: lambda: self.html.open_tag(tag) or self.stack.append(conf.get('push'))}.get(is_special or tag is None)
+        tag_func()
+        
+        self.temp_val = {True: cmd, False: self.temp_val}.get(is_special)
+        return conf.get('next', 0)
 
-    def _action_pop(self):
-        if len(self.stack) > 1:
-            top = self.stack.pop()
-            self.html.close_tag(top)
-
-    def _action_multi_param(self, token):
-        if self.temp_val == 'ENLACE':
-            self.html.open_tag('a', {'href': self.temp_param1})
-            self.html.add_text(token.value)
-            self.stack.append('a')
-        else: # IMAGEN
-            self.html.open_tag('img', {'src': self.temp_param1, 'alt': token.value}, self_closing=True)
+    def _action_pop(self, token=None):
+        can_pop = len(self.stack) > 1
+        pop_func = {True: lambda: self.html.close_tag(self.stack.pop()), False: lambda: None}.get(can_pop)
+        pop_func()
+        return None

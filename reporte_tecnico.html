@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte Técnico Extenso - Proyecto Autómatas II</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; line-height: 1.7; color: #1e293b; max-width: 1000px; margin: auto; padding: 50px; background: #f8fafc; }
+        .document { background: white; padding: 60px; border-radius: 4px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        h1 { color: #0f172a; border-bottom: 3px solid #38bdf8; padding-bottom: 15px; text-align: center; font-size: 2.2rem; text-transform: uppercase; letter-spacing: 1px; }
+        h2 { color: #0369a1; margin-top: 40px; border-left: 6px solid #38bdf8; padding-left: 20px; font-size: 1.5rem; background: #f0f9ff; padding-top: 5px; padding-bottom: 5px; }
+        h3 { color: #0c4a6e; margin-top: 25px; font-size: 1.2rem; }
+        p, li { font-size: 1.05rem; text-align: justify; }
+        pre { background: #0f172a; color: #38bdf8; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-height: 1.4; border: 1px solid #1e293b; }
+        code { font-family: 'Fira Code', monospace; background: #f1f5f9; padding: 3px 6px; border-radius: 4px; color: #ef4444; font-size: 0.95rem; }
+        table { width: 100%; border-collapse: collapse; margin: 25px 0; font-size: 0.9rem; }
+        th, td { border: 1px solid #cbd5e1; padding: 12px; text-align: center; }
+        th { background-color: #f1f5f9; color: #475569; font-weight: 700; }
+        .formal-def { background: #fdf2f2; border: 1px solid #fecaca; padding: 20px; border-radius: 8px; margin: 20px 0; font-style: italic; }
+        .footer { margin-top: 60px; text-align: center; font-size: 0.85rem; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+        .page-break { page-break-after: always; }
+        @media print {
+            body { background: white; padding: 0; }
+            .document { box-shadow: none; border: none; padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="document">
+        <h1>Especificación Técnica del Compilador MiniWebLang</h1>
+        <p style="text-align: center; font-weight: 600; color: #64748b;">Proyecto de Lenguajes y Autómatas II | Universidad Profesional</p>
+
+        <h2>1. Definición Formal del Autómata (7-Tupla)</h2>
+        <p>El sistema se rige por un Autómata de Pila (PDA) definido matemáticamente como:</p>
+        <div class="formal-def">
+            M = (Q, Σ, Γ, δ, q₀, Z₀, F) <br><br>
+            Donde:<br>
+            • <b>Q</b> = {Q₀, Q_WAIT_VAL, Q_WAIT_SEMI, Q_WAIT_P1, Q_WAIT_P2, Q_WAIT_VAL_OPT, Q_FIN}<br>
+            • <b>Σ</b> = {COMANDO, CADENA, PUNTOCOMA, LLAVE_C, EOF}<br>
+            • <b>Γ</b> = {h1, h2, p, ul, li, section, a, #}<br>
+            • <b>δ</b> = Función de transición (definida en la matriz de la Sección 3)<br>
+            • <b>q₀</b> = Q₀ (Estado inicial)<br>
+            • <b>Z₀</b> = # (Fondo de pila)<br>
+            • <b>F</b> = {Q_FIN} (Aceptación por estado final y pila vacía a excepción de Z₀)
+        </div>
+
+        <div class="page-break"></div>
+
+        <h2>2. Analizador Léxico (FA): Matriz de Transiciones</h2>
+        <p>El Lexer utiliza una matriz de 10 estados para validar el alfabeto carácter por carácter. A continuación se presenta la tabla de estados y transiciones:</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>E/C</th>
+                    <th>LTR(0)</th>
+                    <th>DIG(1)</th>
+                    <th>QUO(2)</th>
+                    <th>PSC(3)</th>
+                    <th>LA(4)</th>
+                    <th>LC(5)</th>
+                    <th>SLH(6)</th>
+                    <th>SPC(7)</th>
+                    <th>OTR(8)</th>
+                    <th>NL(9)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><b>0 (Ini)</b></td><td>1</td><td>-1</td><td>2</td><td>7</td><td>8</td><td>9</td><td>4</td><td>0</td><td>-1</td><td>0</td></tr>
+                <tr><td><b>1 (Cmd)</b></td><td>1</td><td>1</td><td>-2</td><td>-2</td><td>-2</td><td>-2</td><td>-2</td><td>-2</td><td>-1</td><td>-2</td></tr>
+                <tr><td><b>2 (Str)</b></td><td>2</td><td>2</td><td>3</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>-1</td></tr>
+                <tr><td><b>3 (StrC)</b></td><td>-2</td><td>-2</td><td>-2</td><td>-2</td><td>-2</td><td>-2</td><td>-2</td><td>-2</td><td>-1</td><td>-2</td></tr>
+                <tr><td><b>4 (/)</b></td><td>-1</td><td>-1</td><td>-1</td><td>-1</td><td>-1</td><td>-1</td><td>5</td><td>-1</td><td>-1</td><td>-1</td></tr>
+                <tr><td><b>5 (Com)</b></td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>5</td><td>0</td></tr>
+            </tbody>
+        </table>
+        <p><i>Nota: El estado -1 indica Error Léxico y el -2 indica Aceptación de Lexema.</i></p>
+
+        <h2>3. Analizador Sintáctico (PDA): Matriz de Estados</h2>
+        <p>La lógica sintáctica se controla mediante una matriz que asocia el estado actual con el tipo de token entrante para determinar la acción semántica y el nuevo estado.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Estado</th>
+                    <th>COMANDO</th>
+                    <th>CADENA</th>
+                    <th>PUNTOCOMA</th>
+                    <th>LLAVE_C</th>
+                    <th>EOF</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><b>Q0 (Base)</b></td><td>(Q0, A_CMD)</td><td>Error</td><td>(Q0, A_POP)</td><td>(Q0, A_POP)</td><td>(99, A_FIN)</td></tr>
+                <tr><td><b>Q1 (WaitVal)</b></td><td>Error</td><td>(Q2, A_TEXT)</td><td>Error</td><td>Error</td><td>Error</td></tr>
+                <tr><td><b>Q2 (WaitSemi)</b></td><td>(Q0, A_IMPL_P)</td><td>Error</td><td>(Q0, A_POP)</td><td>(Q0, A_IMPL_P)</td><td>(99, A_FIN)</td></tr>
+                <tr><td><b>Q3 (WaitP1)</b></td><td>Error</td><td>(Q4, A_SAVE_P1)</td><td>Error</td><td>Error</td><td>Error</td></tr>
+                <tr><td><b>Q5 (WaitOpt)</b></td><td>(Q0, A_IMPL_P)</td><td>(Q2, A_TEXT)</td><td>(Q0, A_NOP)</td><td>Error</td><td>(99, A_FIN)</td></tr>
+            </tbody>
+        </table>
+
+        <div class="page-break"></div>
+
+        <h2>4. Diseño de la Tabla de Símbolos y Errores</h2>
+        <h3>Tabla de Símbolos</h3>
+        <p>Se implementó un gestor de símbolos que almacena lexemas únicos, su categoría gramatical y un histórico de coordenadas. Esto permite auditoría de código y depuración avanzada.</p>
+        <pre><code># Clase SymbolTable (Resumen)
+class SymbolTable:
+    def insert(self, lexeme, kind, line):
+        # Almacena en dict: {lexeme: {kind: kind, lines: [line1, line2]}}</code></pre>
+
+        <h3>Pila de Errores (Categorización)</h3>
+        <p>Los errores se clasifican mediante un sistema de códigos alfanuméricos:</p>
+        <ul>
+            <li><code>L001</code>: <b>Léxico.</b> Símbolo no perteneciente al alfabeto (ej. <code>$</code>, <code>@</code>).</li>
+            <li><code>P001</code>: <b>Sintáctico.</b> Violación de la gramática (ej. <code>TITULO ;</code>).</li>
+            <li><code>C001</code>: <b>Semántico (Comando).</b> Comando no reconocido por el sistema.</li>
+            <li><code>S001</code>: <b>Semántico (Estructura).</b> Uso incorrecto de anidamiento (ej. <code>ELEMENTO</code> fuera de <code>LISTA</code>).</li>
+        </ul>
+
+        <h2>5. Arquitectura del Código (Zero-IF Logic)</h2>
+        <p>La implementación cumple estrictamente con el requisito de no utilizar sentencias <code>if/else</code> para la toma de decisiones del autómata, sustituyéndolas por despacho de funciones en diccionarios.</p>
+        <pre><code># Ejemplo del ciclo principal del Parser
+while self.state != 99:
+    transition = self.MATRIX[self.state].get(token.type)
+    action_id = transition[1]
+    self.DISPATCHER[action_id](token) # Llamada directa sin condicionales</code></pre>
+
+        <div class="page-break"></div>
+
+        <h2>6. Programas de Prueba y Resultados</h2>
+        <h3>Ejemplo de Ejecución Exitosa</h3>
+        <pre>TITULO "Proyecto Final";
+SECCION {
+    PARRAFO "Bienvenido al equipo 10";
+    LISTA { ELEMENTO "Matrices"; ELEMENTO "Autómatas"; };
+};</pre>
+        <p><b>Resultado:</b> Generación de HTML válido y tabla de símbolos con 5 entradas registradas.</p>
+
+        <h3>Ejemplo de Detección de Error Semántico</h3>
+        <pre>TITULO "Prueba";
+ELEMENTO "Error"; // Lanza S001: ELEMENTO debe estar dentro de ul</pre>
+        <p><b>Resultado:</b> La Pila de Errores muestra el código S001 y detiene la generación del archivo físico por seguridad de integridad.</p>
+
+        <footer class="footer">
+            Documento generado por Antigravity AI Compiler Engine <br>
+            &copy; 2026 Proyectos de Sistemas de Información
+        </footer>
+    </div>
+</body>
+</html>

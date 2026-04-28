@@ -7,3 +7,6 @@ env/
 venv/
 *.html
 !test.html
+!informe_proyecto.html
+!avance_proyecto.html
+!reporte_tecnico.html

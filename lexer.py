@@ -12,111 +12,101 @@ class Token:
 
 class LexerFA:
     """
-    Lexer basado en un Autómata Finito (FA) con Matriz de Transiciones.
-    Validación carácter por carácter.
+    Lexer basado en un Autómata Finito Estricto.
+    Sin sentencias IF para la lógica de estados; utiliza mapeo directo en matriz.
     """
     def __init__(self, code, error_pile):
-        self.code = code
+        # Añadimos un caracter final para forzar la aceptación del último token
+        self.code = code + " " 
         self.error_pile = error_pile
         self.tokens = []
         self.pos = 0
         self.line = 1
         self.column = 1
         
-        # Mapeo de Caracteres a Clases (Columnas de la Matriz)
-        # 0: Letra (A-Z), 1: Dígito (0-9), 2: Comilla ("), 3: PuntoComa (;), 
-        # 4: LlaveA ({), 5: LlaveC (}), 6: Slash (/), 7: Espacio, 8: Otros
-        self.CHAR_MAP = {} # Se llena dinámicamente
+        # Mapeo ASCII a columnas de la matriz (128 caracteres estándar)
+        # 0: Letra, 1: Dígito, 2: Comilla, 3: PuntoComa, 4: LlaveA, 5: LlaveC, 6: Slash, 7: Espacio, 8: Otros, 9: Salto de Línea
+        self.CHAR_MAP = [8] * 256
+        for c in range(65, 91): self.CHAR_MAP[c] = 0   # A-Z
+        for c in range(97, 123): self.CHAR_MAP[c] = 0  # a-z
+        for c in range(48, 58): self.CHAR_MAP[c] = 1   # 0-9
+        self.CHAR_MAP[ord('"')] = 2
+        self.CHAR_MAP[ord(';')] = 3
+        self.CHAR_MAP[ord('{')] = 4
+        self.CHAR_MAP[ord('}')] = 5
+        self.CHAR_MAP[ord('/')] = 6
+        self.CHAR_MAP[ord(' ')] = 7
+        self.CHAR_MAP[ord('\t')] = 7
+        self.CHAR_MAP[ord('\r')] = 7
+        self.CHAR_MAP[ord('\n')] = 9 
 
         # Matriz de Transiciones
-        # Estados: 0: Inicio, 1: Comando, 2: String(Abierto), 3: String(Cerrando), 4: Slash, 5: Comentario
-        # -1 representa estado de error léxico
-        # [LTR, DIG, QUO, PSC, LA, LC, SLH, SPC, OTR]
+        # Estados >= 0 son normales.
+        # Estado -1 = Error Léxico
+        # Estado -2 = Aceptación de Token
+        # LTR(0) DIG(1) QUO(2) PSC(3) LA(4) LC(5) SLH(6) SPC(7) OTR(8) NL(9)
         self.MATRIX = [
-            [ 1, -1,  2,  7,  8,  9,  4,  0, -1], # 0: Inicio
-            [ 1,  1, -1, -1, -1, -1, -1, -1, -1], # 1: Comando (Sigue leyendo letras/nums)
-            [ 2,  2,  3,  2,  2,  2,  2,  2,  2], # 2: Leyendo interior String (Acepta casi todo)
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1], # 3: String Cerrado (Estado de aceptación)
-            [-1, -1, -1, -1, -1, -1,  5, -1, -1], # 4: Primer SLASH visto
-            [ 5,  5,  5,  5,  5,  5,  5,  5,  5], # 5: Ignorando comentario hasta \n
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1], # 6: (No usado)
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1], # 7: PuntoComa (Aceptación)
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1], # 8: LlaveA (Aceptación)
-            [-1, -1, -1, -1, -1, -1, -1, -1, -1], # 9: LlaveC (Aceptación)
+            [  1,  -1,   2,   7,   8,   9,   4,   0,  -1,   0], # 0: Inicio
+            [  1,   1,  -2,  -2,  -2,  -2,  -2,  -2,  -1,  -2], # 1: Comando (reconoce hasta encontrar algo que no sea letra/num)
+            [  2,   2,   3,   2,   2,   2,   2,   2,   2,  -1], # 2: Interior de Cadena
+            [ -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -1,  -2], # 3: Cadena cerrada
+            [ -1,  -1,  -1,  -1,  -1,  -1,   5,  -1,  -1,  -1], # 4: Primer '/' (Comentario)
+            [  5,   5,   5,   5,   5,   5,   5,   5,   5,   0], # 5: Ignorando comentario (NL regresa a 0)
+            [ -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1], # 6: (No usado)
+            [ -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -1,  -2], # 7: PuntoComa (Aceptado)
+            [ -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -1,  -2], # 8: LlaveA (Aceptado)
+            [ -2,  -2,  -2,  -2,  -2,  -2,  -2,  -2,  -1,  -2], # 9: LlaveC (Aceptado)
         ]
 
-    def _get_char_class(self, char):
-        if char.isalpha(): return 0
-        if char.isdigit(): return 1
-        if char == '"': return 2
-        if char == ';': return 3
-        if char == '{': return 4
-        if char == '}': return 5
-        if char == '/': return 6
-        if char.isspace(): return 7
-        return 8
+        # Diccionario que mapea estados de aceptación de vuelta a un tipo de token
+        self.TOKEN_TYPES = {
+            1: 'COMANDO',
+            3: 'CADENA',
+            7: 'PUNTOCOMA',
+            8: 'LLAVE_A',
+            9: 'LLAVE_C'
+        }
 
     def tokenize(self):
-        while self.pos < len(self.code):
+        while self.pos < len(self.code) - 1:
             state = 0
             lexeme = ""
             start_col = self.column
             
-            # El autómata avanza mientras no llegue a un estado final (o error)
-            # y el carácter no sea un espacio que reinicia el ciclo en el estado 0
-            while self.pos < len(self.code):
+            # Ciclo del autómata finito para 1 solo lexema
+            while state >= 0 and self.pos < len(self.code):
                 char = self.code[self.pos]
-                char_class = self._get_char_class(char)
+                ord_c = ord(char) if ord(char) < 256 else 8
+                char_class = self.CHAR_MAP[ord_c]
                 next_state = self.MATRIX[state][char_class]
 
+                # Acciones asociadas al salto de línea y espacios manejadas sin ifs anidados
+                # usando diccionarios para sumar posiciones
+                self.line += {9: 1}.get(char_class, 0)
+                self.column = {9: 1}.get(char_class, self.column + 1)
+                
+                # Para acumular el lexema, usamos un diccionario que determina si sumamos o no basándonos en si es espacio en el estado 0
+                add_char = {True: "", False: char}.get(state == 0 and char_class in [7, 9])
+                lexeme += add_char
+
+                if next_state == -2:
+                    # Aceptación: Creamos token y no avanzamos pos porque el caracter actual causó el quiebre
+                    t_type = self.TOKEN_TYPES.get(state, 'UNKNOWN')
+                    # Diccionario para limpiar comillas en cadenas sin usar if
+                    clean_lex = {'CADENA': lexeme[1:-2]}.get(t_type, lexeme[:-1])
+                    self.tokens.append(Token(t_type, clean_lex.strip(), self.line, start_col))
+                    break
+                
                 if next_state == -1:
-                    # Si estamos en inicio y no reconoce, es error
-                    if state == 0 and char_class != 7:
-                        self.error_pile.push("L001", f"Carácter inválido: {char}", self.line, self.column)
-                        self.pos += 1
-                        self.column += 1
-                        break
-                    else:
-                        # Si estábamos reconociendo algo, el estado anterior era el lexema completo
-                        break 
+                    # Error léxico
+                    self.error_pile.push("L001", f"Lexema inválido cerca de: {char}", self.line, start_col)
+                    self.pos += 1
+                    break
 
-                # Manejo de línea y columna
-                if char == '\n':
-                    self.line += 1
-                    self.column = 1
-                else:
-                    self.column += 1
-
-                # Acumular lexema si no es espacio en el estado inicial
-                if not (state == 0 and char_class == 7):
-                    lexeme += char
+                # Comentario multilínea resetea directo con 0 según la matriz, limpiamos lexema
+                lexeme = {0: "", 5: ""}.get(next_state, lexeme)
                 
                 state = next_state
                 self.pos += 1
 
-                # Salir si llegamos a un estado que es atómico (punto y coma, llaves)
-                if state in [3, 7, 8, 9]:
-                    break
-                
-                # Para comentarios, consumimos hasta fin de línea
-                if state == 5:
-                    while self.pos < len(self.code) and self.code[self.pos] != '\n':
-                        self.pos += 1
-                        self.column += 1
-                    state = 0 # Reiniciar tras comentario
-                    lexeme = ""
-                    break
-
-            # Determinar tipo de token al salir del autómata
-            if state == 1:
-                self.tokens.append(Token('COMANDO', lexeme, self.line, start_col))
-            elif state == 3:
-                self.tokens.append(Token('CADENA', lexeme[1:-1], self.line, start_col))
-            elif state == 7:
-                self.tokens.append(Token('PUNTOCOMA', ';', self.line, start_col))
-            elif state == 8:
-                self.tokens.append(Token('LLAVE_A', '{', self.line, start_col))
-            elif state == 9:
-                self.tokens.append(Token('LLAVE_C', '}', self.line, start_col))
-            
         return self.tokens
