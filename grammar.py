@@ -19,7 +19,15 @@ COMMAND_MAP = {
     'LISTA': 'ul',
     'ELEMENTO': 'li',
     'SUBLISTA': 'ul',
-    'SECCION': 'section'
+    'SECCION': 'section',
+    'NAVEGACION': 'nav',
+    'PIE': 'footer',
+    'ARTICULO': 'article',
+    'NEGRILLA': 'strong',
+    'CURSIVA': 'em',
+    'SUBRAYADO': 'u',
+    'CITA': 'blockquote',
+    'DIVISOR': 'hr'
 }
 
 # Comandos que pueden contener otros comandos (Anidables)

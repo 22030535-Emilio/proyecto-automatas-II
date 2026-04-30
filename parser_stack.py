@@ -71,10 +71,19 @@ class ParserPDA:
             'BOTON': {'tag': 'button', 'push': 'button', 'next': 1},
             'LISTA': {'tag': 'ul', 'push': 'ul', 'next': 0},
             'SECCION': {'tag': 'section', 'push': 'section', 'next': 0},
+            'NAVEGACION': {'tag': 'nav', 'push': 'nav', 'next': 0},
+            'PIE': {'tag': 'footer', 'push': 'footer', 'next': 0},
+            'ARTICULO': {'tag': 'article', 'push': 'article', 'next': 0},
             'ELEMENTO': {'tag': 'li', 'push': 'li', 'next': 5, 'require_top': 'ul', 'implicit_close': 'li'},
             'SUBLISTA': {'tag': 'ul', 'push': 'ul', 'next': 0, 'require_top': 'li'},
+            'NEGRILLA': {'tag': 'strong', 'push': 'strong', 'next': 1},
+            'CURSIVA': {'tag': 'em', 'push': 'em', 'next': 1},
+            'SUBRAYADO': {'tag': 'u', 'push': 'u', 'next': 1},
+            'CITA': {'tag': 'blockquote', 'push': 'blockquote', 'next': 1},
+            'DIVISOR': {'tag': 'hr', 'push': None, 'next': 0, 'self_closing': True},
             'ENLACE': {'next': 3, 'special': True},
-            'IMAGEN': {'next': 3, 'special': True}
+            'IMAGEN': {'next': 3, 'special': True},
+            'VIDEO': {'next': 3, 'special': True}
         }
 
     def parse(self):
@@ -121,7 +130,8 @@ class ParserPDA:
     def _action_finish_p2(self, token):
         cmds = {
             'ENLACE': lambda: self.html.open_tag('a', {'href': self.temp_param1}) or self.html.add_text(token.value) or self.stack.append('a'),
-            'IMAGEN': lambda: self.html.open_tag('img', {'src': self.temp_param1, 'alt': token.value}, self_closing=True)
+            'IMAGEN': lambda: self.html.open_tag('img', {'src': self.temp_param1, 'alt': token.value}, self_closing=True),
+            'VIDEO': lambda: self.html.open_tag('video', {'src': self.temp_param1, 'controls': True}) or self.html.add_text(token.value) or self.stack.append('video')
         }
         res_func = cmds.get(self.temp_val, lambda: None)
         res_func()
@@ -154,9 +164,13 @@ class ParserPDA:
         
         # Apertura de etiquetas
         is_special = conf.get('special', False)
-        # Operadores booleanos cortos para decidir funciones
+        is_self_closing = conf.get('self_closing', False)
+        
         tag = conf.get('tag')
-        tag_func = {True: lambda: None, False: lambda: self.html.open_tag(tag) or self.stack.append(conf.get('push'))}.get(is_special or tag is None)
+        tag_func = {
+            True: lambda: None, 
+            False: lambda: self.html.open_tag(tag, self_closing=is_self_closing) or (self.stack.append(conf.get('push')) if conf.get('push') else None)
+        }.get(is_special or tag is None)
         tag_func()
         
         self.temp_val = {True: cmd, False: self.temp_val}.get(is_special)

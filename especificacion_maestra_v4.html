@@ -148,6 +148,7 @@
         <a href="#guia-desarrollo">7. Guía de Desarrollo</a>
         <a href="#testing">8. Pruebas y QA</a>
         <a href="#faq">9. Manual de Usuario</a>
+        <a href="#gramatica-extendida">10. Gramática Extendida</a>
     </nav>
 
     <div class="hero">
@@ -308,6 +309,32 @@
             <p>Clona el repo y ejecuta `pip install -r requirements.txt`. Luego corre `python app.py`.</p>
             <p><strong>¿Por qué mi código no compila?</strong></p>
             <p>Verifica que cada instrucción termine en `;`. El punto y coma es el delimitador de sincronización del PDA.</p>
+        </section>
+
+        <section id="gramatica-extendida">
+            <h2>10. Gramática Extendida y Nuevos Comandos</h2>
+            <p>Se ha expandido el léxico del lenguaje para permitir la creación de interfaces web más complejas y semánticamente ricas.</p>
+            
+            <h3>10.1 Nuevos Comandos de Texto (Inline)</h3>
+            <table>
+                <tr><th>Comando</th><th>Etiqueta HTML</th><th>Propósito</th></tr>
+                <tr><td>NEGRILLA</td><td>&lt;strong&gt;</td><td>Resaltado de importancia técnica o semántica.</td></tr>
+                <tr><td>CURSIVA</td><td>&lt;em&gt;</td><td>Énfasis en el texto.</td></tr>
+                <tr><td>SUBRAYADO</td><td>&lt;u&gt;</td><td>Anotaciones o énfasis visual.</td></tr>
+                <tr><td>CITA</td><td>&lt;blockquote&gt;</td><td>Bloques de texto referenciados.</td></tr>
+            </table>
+
+            <h3>10.2 Estructuras de Diseño Avanzadas</h3>
+            <table>
+                <tr><th>Comando</th><th>Etiqueta HTML</th><th>Descripción</th></tr>
+                <tr><td>ARTICULO</td><td>&lt;article&gt;</td><td>Define contenido independiente y autocontenido.</td></tr>
+                <tr><td>NAVEGACION</td><td>&lt;nav&gt;</td><td>Contenedor para enlaces de navegación.</td></tr>
+                <tr><td>PIE</td><td>&lt;footer&gt;</td><td>Sección de pie de página.</td></tr>
+                <tr><td>DIVISOR</td><td>&lt;hr&gt;</td><td>Línea divisoria (Elemento Autocerrado).</td></tr>
+            </table>
+
+            <h3>10.3 Soporte Multimedia</h3>
+            <p>El comando <code>VIDEO</code> se ha integrado con lógica de parámetros dobles (URL y Atributos), similar a <code>ENLACE</code> e <code>IMAGEN</code>, permitiendo la incrustación de recursos externos con controles automáticos.</p>
         </section>
 
         <footer>

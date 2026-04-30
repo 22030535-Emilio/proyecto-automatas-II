@@ -11,7 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const keywords = [
         'TITULO', 'ENCABEZADO', 'PARRAFO', 'BOTON', 
         'LISTA', 'ELEMENTO', 'SUBLISTA', 'SECCION', 
-        'ENLACE', 'IMAGEN'
+        'ENLACE', 'IMAGEN', 'VIDEO', 'NAVEGACION', 
+        'PIE', 'ARTICULO', 'NEGRILLA', 'CURSIVA', 
+        'SUBRAYADO', 'CITA', 'DIVISOR'
     ];
 
     function updateHighlighting() {
