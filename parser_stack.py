@@ -24,15 +24,18 @@ class ParserPDA:
             0: {
                 'COMANDO': (0, 'A_CMD'), 
                 'PUNTOCOMA': (0, 'A_POP'),
+                'LLAVE_A': (0, 'A_NOP'),
                 'LLAVE_C': (0, 'A_POP'),
                 'EOF': (99, 'A_FINISH')
             },
             1: {
                 'CADENA': (2, 'A_TEXT'),
+                'LLAVE_A': (1, 'A_NOP')
             },
             2: {
                 'PUNTOCOMA': (0, 'A_POP'),
                 'COMANDO': (0, 'A_IMPLICIT_POP'),
+                'LLAVE_A': (2, 'A_NOP'),
                 'LLAVE_C': (0, 'A_IMPLICIT_POP'),
                 'EOF': (99, 'A_FINISH')
             },
@@ -45,6 +48,7 @@ class ParserPDA:
             5: {
                 'CADENA': (2, 'A_TEXT'),
                 'COMANDO': (0, 'A_IMPLICIT_POP'),
+                'LLAVE_A': (5, 'A_NOP'),
                 'PUNTOCOMA': (0, 'A_NOP'),
                 'EOF': (99, 'A_FINISH')
             }
@@ -106,7 +110,7 @@ class ParserPDA:
             self.state = {True: act_result, False: next_state}.get(act_result is not None)
             
             # Decidir si avanza el puntero de pos sin IF
-            advance = {'A_IMPLICIT_POP': 0, 'A_NOP': 0, 'E_SYNTAX': 1}.get(action_id, 1)
+            advance = {'A_IMPLICIT_POP': 0, 'E_SYNTAX': 1}.get(action_id, 1)
             self.pos += advance
 
         return self.html.generate_full_html()
