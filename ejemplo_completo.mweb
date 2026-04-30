@@ -1,0 +1,45 @@
+// Ejemplo Maestro de MiniWebLang v4.0
+// Este código demuestra todas las capacidades del lenguaje expandido
+
+NAVEGACION {
+    TITULO "Portal de Ingeniería";
+    ENLACE "Repositorio GitHub" "https://github.com/22030535-Emilio/proyecto-automatas-II";
+    ENLACE "Documentación" "#docs";
+}
+
+ARTICULO {
+    ENCABEZADO "Nuevas Capacidades del Compilador";
+    
+    PARRAFO "El traductor ahora soporta una gramática mucho más rica para el diseño web semántico.";
+    
+    NEGRILLA "Este texto resalta la importancia del Autómata de Pila en la validación sintáctica.";
+    
+    CURSIVA "Por otro lado, la cursiva permite dar énfasis a los conceptos teóricos.";
+    
+    DIVISOR;
+
+    CITA "La teoría de autómatas es la base fundamental para la construcción de traductores y compiladores modernos.";
+
+    ENCABEZADO "Recursos Multimedia";
+    PARRAFO "A continuación se muestra un video demostrativo incrustado directamente:";
+    VIDEO "https://www.w3schools.com/html/mov_bbb.mp4" "Video de Demostración";
+}
+
+SECCION {
+    ENCABEZADO "Organización por Listas";
+    LISTA {
+        ELEMENTO "Módulo de Lexer (FA)";
+        ELEMENTO "Módulo de Parser (PDA)";
+        SUBLISTA {
+            ELEMENTO "Manejo de la Pila";
+            ELEMENTO "Gestión de Contexto";
+        }
+        ELEMENTO "Generador de HTML";
+    }
+}
+
+PIE {
+    DIVISOR;
+    PARRAFO "Desarrollado por el Equipo 10 - Tecnológico de Ciudad Enrique";
+    SUBRAYADO "Todos los derechos reservados © 2026";
+}
