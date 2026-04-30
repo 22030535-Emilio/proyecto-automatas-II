@@ -100,20 +100,62 @@ main {
 
 .editor-wrapper {
     flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+#code-editor, .highlighter {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-family: 'Fira Code', monospace;
+    font-size: 1rem;
+    padding: 1.5rem;
+    line-height: 1.6;
+    tab-size: 4;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+    box-sizing: border-box;
 }
 
 #code-editor {
-    width: 100%;
-    height: 100%;
     background: transparent;
     border: none;
-    color: #e2e8f0;
-    font-family: 'Fira Code', monospace;
-    font-size: 1rem;
-    padding: 1rem;
+    color: transparent; /* Text is hidden, shown in highlighter behind */
+    caret-color: var(--accent); /* Cursor is still visible */
     resize: none;
     outline: none;
-    line-height: 1.5;
+    z-index: 2;
+}
+
+.highlighter {
+    z-index: 1;
+    color: #94a3b8;
+    pointer-events: none;
+    overflow-y: auto;
+    background: #020617;
+}
+
+/* Syntax Colors */
+.hl-keyword {
+    color: #38bdf8;
+    font-weight: 600;
+}
+
+.hl-string {
+    color: #34d399;
+}
+
+.hl-comment {
+    color: #64748b;
+    font-style: italic;
+}
+
+.hl-symbol {
+    color: #f472b6;
 }
 
 .tabs {

@@ -6,6 +6,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorStack = document.getElementById('error-stack');
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
+    const highlighter = document.getElementById('highlighter-overlay');
+
+    const keywords = [
+        'TITULO', 'ENCABEZADO', 'PARRAFO', 'BOTON', 
+        'LISTA', 'ELEMENTO', 'SUBLISTA', 'SECCION', 
+        'ENLACE', 'IMAGEN'
+    ];
+
+    function updateHighlighting() {
+        let content = codeEditor.value;
+
+        // Escape HTML
+        content = content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        // Highlight strings
+        content = content.replace(/"[^"]*"/g, '<span class="hl-string">$&</span>');
+
+        // Highlight comments
+        content = content.replace(/\/\/.*$/gm, '<span class="hl-comment">$&</span>');
+
+        // Highlight keywords (only if they are whole words)
+        keywords.forEach(kw => {
+            const regex = new RegExp(`\\b${kw}\\b`, 'g');
+            content = content.replace(regex, `<span class="hl-keyword">${kw}</span>`);
+        });
+
+        // Highlight symbols
+        content = content.replace(/[;{}]/g, '<span class="hl-symbol">$&</span>');
+
+        highlighter.innerHTML = content + (content.endsWith('\n') ? ' ' : '');
+    }
+
+    codeEditor.addEventListener('input', updateHighlighting);
+    codeEditor.addEventListener('scroll', () => {
+        highlighter.scrollTop = codeEditor.scrollTop;
+    });
 
     // Tab Switching
     tabBtns.forEach(btn => {
@@ -79,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initial compilation
+    // Initial compilation and highlighting
+    updateHighlighting();
     compileBtn.click();
 });
