@@ -1,0 +1,64 @@
+// ==================================================
+// EJEMPLO MAESTRO: WebLang Studio
+// ==================================================
+
+NAVEGACION {
+    TITULO "WebLang OS Enterprise";
+    ENLACE "https://google.com" "Explorar Docs";
+    ENLACE "/docs" "Manual Técnico";
+}
+
+HERO {
+    ENCABEZADO "El Futuro del Marcado Web";
+    PARRAFO "Diseñado para transpilar pseudocódigo a HTML5 semántico utilizando pura teoría matemática de autómatas.";
+    BOTON "Iniciar Compilación";
+}
+
+CONTENEDOR {
+    ENCABEZADO "Características de WebLang";
+    
+    GRID {
+        SECCION {
+            ENCABEZADO "Autónomas de Pila";
+            PARRAFO "Validación estricta del orden jerárquico de las etiquetas mediante transiciones algebraicas en una pila.";
+        }
+        
+        SECCION {
+            ENCABEZADO "Sintaxis Limpia";
+            PARRAFO "Olvídate de las etiquetas ruidosas. Escribe comandos claros con bloques bien delimitados.";
+        }
+        
+        SECCION {
+            ENCABEZADO "Alto Rendimiento";
+            PARRAFO "El análisis de tokens funciona mediante matrices en O(N) sin estructuras IF complejas.";
+        }
+    }
+
+    DIVISOR;
+
+    ARTICULO {
+        ENCABEZADO "Estilos de Texto Admitidos";
+        PARRAFO "WebLang admite una rica gama de formatos en línea:";
+        
+        LISTA {
+            ELEMENTO { NEGRILLA "Texto en Negrita para ideas fuertes."; }
+            ELEMENTO { CURSIVA "Texto en Cursiva para comentarios."; }
+            ELEMENTO { SUBRAYADO "Texto Subrayado de importancia."; }
+            ELEMENTO { PEQUENO "Notas pequeñas de pie de página."; }
+            ELEMENTO { CODIGO "print('Hello WebLang!');"; }
+        }
+    }
+
+    DIVISOR;
+
+    CONSULTA {
+        ENCABEZADO "Dashboard de Compilación";
+        DATO "Tokenizador Estado" "Activo";
+        DATO "Parser de Pila" "Sin Errores";
+        PROGRESO "100" "100";
+    }
+}
+
+PIE {
+    PARRAFO "© 2026 WebLang Studio - Compilación formal y diseño premium.";
+}

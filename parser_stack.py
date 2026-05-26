@@ -30,13 +30,15 @@ class ParserPDA:
             },
             1: {
                 'CADENA': (2, 'A_TEXT'),
-                'LLAVE_A': (1, 'A_NOP')
+                'LLAVE_A': (1, 'A_NOP'),
+                'LLAVE_C': (0, 'A_POP'), # Cierre seguro
+                'COMANDO': (0, 'A_CMD')  # Soporte para comandos sin cadena
             },
             2: {
                 'PUNTOCOMA': (0, 'A_POP'),
-                'COMANDO': (0, 'A_IMPLICIT_POP'),
+                'COMANDO': (0, 'A_CMD'),
                 'LLAVE_A': (2, 'A_NOP'),
-                'LLAVE_C': (0, 'A_IMPLICIT_POP'),
+                'LLAVE_C': (0, 'A_POP'),
                 'EOF': (99, 'A_FINISH')
             },
             3: {
@@ -47,9 +49,10 @@ class ParserPDA:
             },
             5: {
                 'CADENA': (2, 'A_TEXT'),
-                'COMANDO': (0, 'A_IMPLICIT_POP'),
+                'COMANDO': (0, 'A_CMD'),
                 'LLAVE_A': (5, 'A_NOP'),
-                'PUNTOCOMA': (0, 'A_NOP'),
+                'PUNTOCOMA': (0, 'A_POP'),
+                'LLAVE_C': (0, 'A_POP'),
                 'EOF': (99, 'A_FINISH')
             }
         }
@@ -87,10 +90,35 @@ class ParserPDA:
             'DIVISOR': {'tag': 'hr', 'push': None, 'next': 0, 'self_closing': True},
             'ENLACE': {'next': 3, 'special': True},
             'IMAGEN': {'next': 3, 'special': True},
-            'VIDEO': {'next': 3, 'special': True}
+            'VIDEO': {'next': 3, 'special': True},
+            'CONTENEDOR': {'tag': 'div', 'push': 'div', 'next': 0},
+            'GRID': {'tag': 'div', 'push': 'div', 'next': 0, 'class': 'grid-layout'},
+            'COLUMNA': {'tag': 'div', 'push': 'div', 'next': 0, 'require_top': 'div'},
+            'CODIGO': {'tag': 'code', 'push': 'code', 'next': 1},
+            'PEQUENO': {'tag': 'small', 'push': 'small', 'next': 1},
+            'SPAN': {'tag': 'span', 'push': 'span', 'next': 1},
+            'SALTO': {'tag': 'br', 'push': None, 'next': 0, 'self_closing': True},
+            'FORMULARIO': {'tag': 'form', 'push': 'form', 'next': 0},
+            'ENTRADA': {'next': 3, 'special': True},
+            'AREA_TEXTO': {'next': 3, 'special': True},
+            'TEXTO': {'tag': 'p', 'push': 'p', 'next': 1},
+            'CONSULTA': {'tag': 'div', 'push': 'div', 'next': 0, 'class': 'query-container'},
+            'FILTRO': {'tag': 'aside', 'push': 'aside', 'next': 0},
+            'DATO': {'next': 3, 'special': True}, # Especial: Clave y Valor
+            'TABLA': {'tag': 'table', 'push': 'table', 'next': 0},
+            'FILA': {'tag': 'tr', 'push': 'tr', 'next': 0, 'require_top': 'table'},
+            'CELDA': {'tag': 'td', 'push': 'td', 'next': 1, 'require_top': 'tr'},
+            'HERO': {'tag': 'section', 'push': 'section', 'next': 0, 'class': 'hero-banner'},
+            'MODAL': {'tag': 'div', 'push': 'div', 'next': 0, 'class': 'modal-overlay'},
+            'PROGRESO': {'tag': 'div', 'push': None, 'next': 3, 'special': True}, # Valor y Max
+            'CHIP': {'tag': 'span', 'push': 'span', 'next': 1, 'class': 'chip'},
+            'AVATAR': {'tag': 'img', 'push': None, 'next': 1, 'self_closing': True, 'class': 'avatar'},
+            'INTERRUPTOR': {'tag': 'label', 'push': 'label', 'next': 1, 'class': 'toggle-switch'},
+            'DESPLEGABLE': {'tag': 'select', 'push': 'select', 'next': 0},
+            'ICONO': {'tag': 'i', 'push': None, 'next': 1, 'class': 'icon'}
         }
 
-    def parse(self):
+    def parse(self, design="nebula"):
         # El while comprueba que no estemos en estado final ni fuera de límites
         while self.state != 99 and self.pos < len(self.tokens):
             token = self.tokens[self.pos]
@@ -113,7 +141,7 @@ class ParserPDA:
             advance = {'A_IMPLICIT_POP': 0, 'E_SYNTAX': 1}.get(action_id, 1)
             self.pos += advance
 
-        return self.html.generate_full_html()
+        return self.html.generate_full_html(design=design)
 
     def _action_error(self, token):
         self.error_pile.push("P001", f"Error Sintáctico: Token {token.type} no esperado", token.line, token.column)
@@ -135,7 +163,11 @@ class ParserPDA:
         cmds = {
             'ENLACE': lambda: self.html.open_tag('a', {'href': self.temp_param1}) or self.html.add_text(token.value) or self.stack.append('a'),
             'IMAGEN': lambda: self.html.open_tag('img', {'src': self.temp_param1, 'alt': token.value}, self_closing=True),
-            'VIDEO': lambda: self.html.open_tag('video', {'src': self.temp_param1, 'controls': True}) or self.html.add_text(token.value) or self.stack.append('video')
+            'VIDEO': lambda: self.html.open_tag('video', {'src': self.temp_param1, 'controls': True}) or self.html.add_text(token.value) or self.stack.append('video'),
+            'ENTRADA': lambda: self.html.open_tag('input', {'placeholder': self.temp_param1, 'name': token.value, 'class': 'modern-input'}, self_closing=True),
+            'AREA_TEXTO': lambda: self.html.open_tag('textarea', {'placeholder': self.temp_param1, 'name': token.value, 'class': 'modern-input'}) or self.stack.append('textarea'),
+            'DATO': lambda: self.html.open_tag('div', {'class': 'key-value-pair'}) or self.html.open_tag('span', {'class': 'key'}) or self.html.add_text(self.temp_param1) or self.html.close_tag('span') or self.html.open_tag('span', {'class': 'value'}) or self.html.add_text(token.value) or self.html.close_tag('span') or self.html.close_tag('div'),
+            'PROGRESO': lambda: self.html.open_tag('div', {'class': 'progress-container'}) or self.html.open_tag('div', {'class': 'progress-bar', 'style': f'width: {self.temp_param1}%'}) or self.html.close_tag('div') or self.html.close_tag('div')
         }
         res_func = cmds.get(self.temp_val, lambda: None)
         res_func()
@@ -171,13 +203,16 @@ class ParserPDA:
         is_self_closing = conf.get('self_closing', False)
         
         tag = conf.get('tag')
+        css_class = conf.get('class')
+        attributes = {'class': css_class} if css_class else None
+        
         tag_func = {
             True: lambda: None, 
-            False: lambda: self.html.open_tag(tag, self_closing=is_self_closing) or (self.stack.append(conf.get('push')) if conf.get('push') else None)
+            False: lambda: self.html.open_tag(tag, attributes=attributes, self_closing=is_self_closing) or (self.stack.append(conf.get('push')) if conf.get('push') else None)
         }.get(is_special or tag is None)
         tag_func()
         
-        self.temp_val = {True: cmd, False: self.temp_val}.get(is_special)
+        self.temp_val = cmd
         return conf.get('next', 0)
 
     def _action_pop(self, token=None):

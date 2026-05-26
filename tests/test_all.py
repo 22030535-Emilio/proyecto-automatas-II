@@ -24,8 +24,8 @@ def test_parser_basic():
     tokens = lexer.tokenize()
     parser = ParserPDA(tokens, errors)
     html = parser.parse()
-    assert "<h1>" in html
-    assert "<p>" in html
+    assert "<h1" in html
+    assert "<p" in html
     print("Parser PDA Matriz: OK")
 
 def test_parser_nesting():

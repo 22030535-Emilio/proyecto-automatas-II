@@ -3,73 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniWebLang Dashboard | Automatas II</title>
+    <title>Nebula Studio — WebLang IDE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 </head>
-<body>
-    <div class="app-container">
-        <header>
-            <div class="logo">
-                <span class="accent">Mini</span>WebLang <small>v2.0 (Matrix Edition)</small>
-            </div>
-            <div class="header-actions">
-                <button id="compile-btn" class="primary-btn">Compilar y Ejecutar</button>
-            </div>
-        </header>
+<body class="h-screen flex flex-col">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
 
-        <main>
-            <div class="editor-section">
-                <div class="section-header">
-                    <h3>Editor de Código</h3>
-                </div>
-                <div class="editor-wrapper">
-                    <div id="highlighter-overlay" class="highlighter"></div>
-                    <textarea id="code-editor" spellcheck="false" placeholder="// Escribe tu código MiniWebLang aquí...
-TITULO \"Hola Mundo\";
-SECCION {
-    PARRAFO \"Bienvenido al equipo 10\";
-}"></textarea>
+    <header class="z-50">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L13.09 8.26L19 6L14.74 10.74L21 12L14.74 13.26L19 18L13.09 15.74L12 22L10.91 15.74L5 18L9.26 13.26L3 12L9.26 10.74L5 6L10.91 8.26L12 2Z"/>
+                </svg>
+            </div>
+            <div class="logo-text-group">
+                <h1 class="logo-name">NEBULA</h1>
+                <div class="logo-sub-row">
+                    <span class="logo-lang-badge">WebLang</span>
+                    <span class="logo-version">IDE v5.0</span>
                 </div>
             </div>
+        </div>
+        <div class="header-actions">
+            <a href="/docs" class="btn-secondary">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                </svg>
+                Docs
+            </a>
+            <button id="download-html-btn" class="btn-secondary" title="Descargar HTML generado">
+                <svg class="w-4 h-4" style="color:#34d399" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                Guardar HTML
+            </button>
+            <button id="download-src-btn" class="btn-secondary" title="Descargar código fuente .weblang">
+                <svg class="w-4 h-4" style="color:#f472b6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                .weblang
+            </button>
+            <button id="compile-btn" class="btn-compile">
+                <span class="relative flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+                </span>
+                EJECUTAR COMPILADOR
+            </button>
+        </div>
+    </header>
 
-            <div class="output-section">
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="preview">Vista Previa HTML</button>
+    <main class="overflow-hidden">
+        <section class="editor-section">
+            <div class="section-header">
+                <div class="flex items-center gap-3">
+                    <span class="status-dot"></span>
+                    <h3 class="section-title">Nebula Editor</h3>
+                    <div class="ide-tab">
+                        <svg class="w-3.5 h-3.5" style="color:#f472b6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <span>main.weblang</span>
+                        <span class="ide-tab-close">×</span>
+                    </div>
+                </div>
+                <div class="color-picker-container">
+                    <label>Tema</label>
+                    <div class="presets">
+                        <button class="preset-btn" data-color="#020617" style="background:#020617" title="Obsidian"></button>
+                        <button class="preset-btn" data-color="#05160e" style="background:#05160e" title="Matrix"></button>
+                        <button class="preset-btn" data-color="#1c0a00" style="background:#1c0a00" title="Ámbar"></button>
+                        <button class="preset-btn" data-color="#12001a" style="background:#12001a" title="Nebula"></button>
+                        <span class="preset-sep"></span>
+                        <button class="preset-btn preset-btn--light" data-color="#f8fafc" style="background:#f8fafc" title="Polar (claro)"></button>
+                        <button class="preset-btn preset-btn--light" data-color="#fefce8" style="background:#fefce8" title="Solar (claro)"></button>
+                        <button class="preset-btn preset-btn--light" data-color="#f0fdf4" style="background:#f0fdf4" title="Jade (claro)"></button>
+                        <button class="preset-btn preset-btn--light" data-color="#fdf2f8" style="background:#fdf2f8" title="Sakura (claro)"></button>
+                    </div>
+                    <input type="color" id="editor-bg-color" value="#020617">
+                </div>
+            </div>
+            <div class="editor-wrapper" id="editor-wrapper">
+                <div id="highlighter-overlay" class="highlighter"></div>
+                <textarea id="code-editor" spellcheck="false" placeholder="// Nebula Studio — WebLang IDE&#10;// Escribe tu código aquí..."></textarea>
+            </div>
+        </section>
+        <section class="output-section">
+            <div class="tabs">
+                <div class="flex">
+                    <button class="tab-btn active" data-tab="preview">Vista Previa</button>
                     <button class="tab-btn" data-tab="symbols">Tabla de Símbolos</button>
                     <button class="tab-btn" data-tab="errors">Pila de Errores</button>
                 </div>
-
-                <div class="tab-content active" id="preview-tab">
+                <div class="preview-design-container">
+                    <label>Previsualización</label>
+                    <select id="preview-design-select">
+                        <option value="nebula">Nebula Cosmic</option>
+                        <option value="matrix">Hacker Matrix</option>
+                        <option value="minimalist">Minimalist White</option>
+                        <option value="sakura">Sakura Pastel</option>
+                        <option value="cyberpunk">Cyberpunk Neon</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex-1 relative overflow-hidden">
+                <div class="tab-content active absolute inset-0" id="preview-tab">
                     <div class="iframe-wrapper">
+                        <div class="mac-bar">
+                            <div class="mac-dots">
+                                <div class="mac-dot red"></div>
+                                <div class="mac-dot yellow"></div>
+                                <div class="mac-dot green"></div>
+                            </div>
+                            <div class="mac-address">nebula://output.weblang</div>
+                            <div style="width:3rem"></div>
+                        </div>
                         <iframe id="html-preview"></iframe>
                     </div>
                 </div>
-
-                <div class="tab-content" id="symbols-tab">
-                    <table id="symbol-table">
-                        <thead>
-                            <tr>
-                                <th>Lexema</th>
-                                <th>Tipo</th>
-                                <th>Líneas</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Symbols go here -->
-                        </tbody>
+                <div class="tab-content absolute inset-0 overflow-y-auto hidden" id="symbols-tab">
+                    <table>
+                        <thead><tr><th>Lexema</th><th>Tipo</th><th>Líneas</th></tr></thead>
+                        <tbody id="symbol-table-body"></tbody>
                     </table>
                 </div>
-
-                <div class="tab-content" id="errors-tab">
-                    <div id="error-stack" class="error-stack">
-                        <!-- Errors go here -->
-                    </div>
+                <div class="tab-content absolute inset-0 overflow-y-auto hidden" id="errors-tab">
+                    <div id="error-stack" class="error-stack"></div>
                 </div>
             </div>
-        </main>
-    </div>
+        </section>
+    </main>
 
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>

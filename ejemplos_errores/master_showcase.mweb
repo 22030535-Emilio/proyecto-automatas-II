@@ -1,0 +1,83 @@
+// ==========================================
+// MASTER SHOWCASE: MiniWebLang NEBULA v4.0
+// Este código utiliza TODOS los comandos aceptados
+// por el autómata de pila (Parser PDA).
+// ==========================================
+
+NAVEGACION {
+    TITULO "Nebula Universe OS";
+    ENLACE "https://google.com" "Explorar Galaxia";
+    ENLACE "#" "Configuración";
+}
+
+CONTENEDOR {
+    ENCABEZADO "Bienvenido al Futuro";
+    
+    PARRAFO "Este es un ejemplo completo que pone a prueba la capacidad máxima de nuestro autómata de estados finitos y pila.";
+    
+    DIVISOR;
+
+    ARTICULO {
+        ENCABEZADO "Estilos de Texto Avanzados";
+        PARRAFO "Puedes aplicar estilos como:";
+        LISTA {
+            ELEMENTO { NEGRILLA "Texto en Negrita para resaltar ideas."; }
+            ELEMENTO { CURSIVA "Texto en Cursiva para énfasis sutil."; }
+            ELEMENTO { SUBRAYADO "Texto Subrayado para importancia."; }
+            ELEMENTO { PEQUENO "Texto pequeño para notas al pie."; }
+            ELEMENTO { CODIGO "print('Hello Nebula'); // Fragmentos de código"; }
+        }
+    }
+
+    DIVISOR;
+
+    SECCION {
+        ENCABEZADO "Layout Inteligente (GRID System)";
+        PARRAFO "La rejilla Nebula ajusta automáticamente las columnas.";
+        
+        GRID {
+            COLUMNA {
+                ENCABEZADO "Visión";
+                CITA "La imaginación es el límite del universo.";
+                BOTON "Ver Más";
+            }
+            COLUMNA {
+                ENCABEZADO "Multimedia";
+                IMAGEN "https://images.unsplash.com/photo-1464802686167-b939a6910659" "Nebula Espacial";
+                VIDEO "https://www.w3schools.com/html/mov_bbb.mp4" "Video de Prueba";
+            }
+            COLUMNA {
+                ENCABEZADO "Listas Anidadas";
+                LISTA {
+                    ELEMENTO "Nivel 1.1";
+                    ELEMENTO {
+                        SPAN "Nivel 1.2 (con sublista)";
+                        SUBLISTA {
+                            ELEMENTO "Nivel 2.1";
+                            ELEMENTO "Nivel 2.2";
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    DIVISOR;
+
+    SECCION {
+        ENCABEZADO "Formularios e Interactividad";
+        FORMULARIO {
+            PARRAFO "Déjanos tu mensaje en la terminal:";
+            ENTRADA "Tu Nombre de Usuario" "usr_id";
+            ENTRADA "Frecuencia de Radio" "radio_freq";
+            AREA_TEXTO "Escribe tu reporte de misión aquí..." "mission_report";
+            BOTON "Transmitir a la Base";
+        }
+    }
+}
+
+PIE {
+    SPAN "© 2026 MiniWebLang Nebula Engine";
+    SALTO;
+    PEQUENO "Desarrollado con Teoría de Autómatas II - Equipo 10";
+}

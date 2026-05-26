@@ -1,7 +1,7 @@
 import sys
 
-class MiniWebError(Exception):
-    """Clase base para errores en el traductor MiniWebLang."""
+class WebLangError(Exception):
+    """Clase base para errores en el traductor WebLang."""
     def __init__(self, message, line=None, column=None):
         self.message = message
         self.line = line
@@ -15,14 +15,14 @@ class MiniWebError(Exception):
             return f"Error en Línea {self.line}: {self.message}"
         return f"Error: {self.message}"
 
-class LexicalError(MiniWebError):
+class LexicalError(WebLangError):
     """Error detectado durante el análisis léxico."""
     pass
 
-class SyntacticError(MiniWebError):
+class SyntacticError(WebLangError):
     """Error detectado durante el análisis sintáctico (Autómata de Pila)."""
     pass
 
-class SemanticError(MiniWebError):
+class SemanticError(WebLangError):
     """Error de lógica (ej. comando no permitido en cierto contexto)."""
     pass

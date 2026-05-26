@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 from flask import Flask, render_template, request, jsonify
 from lexer import LexerFA
 from parser_stack import ParserPDA
@@ -10,10 +11,15 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@app.route('/docs')
+def docs():
+    return render_template('docs.html')
+
 @app.route('/compile', methods=['POST'])
 def compile_code():
     data = request.json
     code = data.get('code', '')
+    design = data.get('design', 'nebula')
     
     errors = ErrorPile()
     
@@ -24,7 +30,7 @@ def compile_code():
         
         # 2. Parser PDA (Matrix driven)
         parser = ParserPDA(tokens, errors)
-        html_output = parser.parse()
+        html_output = parser.parse(design)
         
         # Format Symbol Table for JSON
         symbol_table = []

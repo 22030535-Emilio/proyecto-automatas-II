@@ -1,0 +1,44 @@
+// Ejemplo Avanzado de MiniWebLang NEBULA v4.0
+// Demostración del nuevo vocabulario expandido
+
+NAVEGACION {
+    TITULO "Portal de Desarrollo Pro";
+    ENLACE "https://google.com" "Documentación API";
+}
+
+CONTENEDOR {
+    ENCABEZADO "Nuevos Componentes de Layout";
+    
+    PARRAFO "Ahora puedes organizar tu contenido usando un sistema de rejilla (GRID).";
+    
+    GRID {
+        COLUMNA {
+            ENCABEZADO "Columna A";
+            PARRAFO "Este es el contenido de la primera columna.";
+            CODIGO "print('Hola Mundo');";
+        }
+        COLUMNA {
+            ENCABEZADO "Columna B";
+            PARRAFO "Aquí puedes ver cómo el GRID ajusta el espacio.";
+            PEQUENO "Nota: El grid es responsivo por defecto.";
+        }
+    }
+}
+
+SECCION {
+    ENCABEZADO "Interactividad y Formularios";
+    
+    FORMULARIO {
+        PARRAFO "Ingresa tus datos para continuar:";
+        ENTRADA "Nombre Completo" "user_name";
+        ENTRADA "Correo Electrónico" "user_email";
+        AREA_TEXTO "Cuéntanos sobre tu proyecto" "project_desc";
+        BOTON "Enviar Formulario";
+    }
+}
+
+PIE {
+    SPAN "Diseñado con el nuevo vocabulario de MiniWebLang";
+    SALTO;
+    SUBRAYADO "Versión 4.0 Final - 2026";
+}

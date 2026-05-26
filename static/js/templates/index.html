@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniWebLang Studio | Ultra Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: #020617;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.1) 0px, transparent 50%),
+                radial-gradient(at 50% 100%, rgba(56, 189, 248, 0.1) 0px, transparent 50%);
+        }
+        .nebula-panel { 
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .glow-border:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body class="text-slate-200 h-screen overflow-hidden flex flex-col">
+    <header class="nebula-panel py-5 px-10 flex justify-between items-center z-50">
+        <div class="flex items-center gap-5">
+            <div class="w-11 h-11 bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-indigo-500/40 transform hover:rotate-6 transition-transform">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+            </div>
+            <div>
+                <h1 class="text-2xl font-black tracking-tight"><span class="gradient-text text-3xl">NEBULA</span> <span class="text-slate-500 font-medium text-xs tracking-widest ml-1 opacity-50 uppercase">v4.0 Final</span></h1>
+            </div>
+        </div>
+        <div class="flex items-center gap-8">
+            <button id="compile-btn" class="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white px-8 py-3 rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-xl shadow-indigo-600/20 flex items-center gap-3">
+                <span class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+                </span>
+                EJECUTAR AUTÓMATA
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 flex p-8 gap-8 overflow-hidden">
+        <!-- Editor Section -->
+        <section class="flex-1 nebula-panel rounded-[2rem] flex flex-col overflow-hidden glow-border transition-all duration-500">
+            <div class="px-8 py-5 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                <h3 class="font-black text-xs tracking-[0.2em] uppercase text-indigo-400 flex items-center gap-3">
+                    <div class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+                    Workspace Editor
+                </h3>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 bg-black/20 p-1.5 rounded-full border border-white/5">
+                        <span class="text-[10px] uppercase font-bold text-slate-500 ml-2">Tema:</span>
+                        <div class="flex gap-1.5">
+                            <button class="preset-btn w-4 h-4 rounded-full" data-color="#020617" style="background: #020617;"></button>
+                            <button class="preset-btn w-4 h-4 rounded-full" data-color="#001a00" style="background: #001a00;"></button>
+                            <button class="preset-btn w-4 h-4 rounded-full" data-color="#1a0f00" style="background: #1a0f00;"></button>
+                            <button class="preset-btn w-4 h-4 rounded-full" data-color="#1a001a" style="background: #1a001a;"></button>
+                        </div>
+                        <input type="color" id="editor-bg-color" class="w-6 h-6 bg-transparent border-none cursor-pointer" value="#020617">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex-1 relative group">
+                <div id="highlighter-overlay" class="absolute inset-0 p-8 font-mono text-lg leading-relaxed highlighter z-0"></div>
+                <textarea id="code-editor" class="absolute inset-0 w-full h-full bg-transparent p-8 font-mono text-lg leading-relaxed text-transparent caret-indigo-400 outline-none resize-none z-10" spellcheck="false" placeholder="// Escribe tu código aquí..."></textarea>
+            </div>
+        </section>
+
+        <!-- Output Section -->
+        <section class="flex-1 flex flex-col gap-6 overflow-hidden">
+            <div class="flex-1 glass-panel rounded-3xl flex flex-col overflow-hidden shadow-xl">
+                <div class="tabs flex border-b border-white/5 bg-white/5">
+                    <button class="tab-btn active px-6 py-4 font-bold text-sm transition-all hover:text-indigo-400 border-b-2 border-transparent" data-tab="preview">VISTA PREVIA</button>
+                    <button class="tab-btn px-6 py-4 font-bold text-sm transition-all hover:text-indigo-400 border-b-2 border-transparent" data-tab="symbols">SÍMBOLOS</button>
+                    <button class="tab-btn px-6 py-4 font-bold text-sm transition-all hover:text-indigo-400 border-b-2 border-transparent" data-tab="errors">ERRORES</button>
+                </div>
+
+                <div class="flex-1 relative">
+                    <div class="tab-content active absolute inset-0 p-4" id="preview-tab">
+                        <div class="w-full h-full bg-white rounded-2xl overflow-hidden shadow-inner">
+                            <iframe id="html-preview" class="w-full h-full border-none"></iframe>
+                        </div>
+                    </div>
+
+                    <div class="tab-content absolute inset-0 p-6 overflow-y-auto hidden" id="symbols-tab">
+                        <table id="symbol-table" class="w-full text-left">
+                            <thead>
+                                <tr class="text-indigo-400 text-[10px] uppercase tracking-widest border-b border-white/5">
+                                    <th class="pb-4">Lexema</th>
+                                    <th class="pb-4">Tipo</th>
+                                    <th class="pb-4">Líneas</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm divide-y divide-white/5"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="tab-content absolute inset-0 p-6 overflow-y-auto hidden" id="errors-tab">
+                        <div id="error-stack" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

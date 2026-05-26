@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="es" style="overflow-y: auto !important; height: auto !important;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual y Especificación — Nebula Studio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        html, body {
+            background-color: #020617 !important;
+            color: #f1f5f9 !important;
+            height: auto !important;
+            min-height: 100vh !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            scroll-behavior: smooth;
+        }
+
+        /* Large, glowing cybernetic ambient orb backgrounds */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(160px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
+        }
+        .glow-orb-cyan {
+            top: 5%;
+            left: 5%;
+            width: 500px;
+            height: 500px;
+            background: #06b6d4;
+        }
+        .glow-orb-indigo {
+            top: 35%;
+            right: 5%;
+            width: 600px;
+            height: 600px;
+            background: #6366f1;
+        }
+        .glow-orb-pink {
+            top: 70%;
+            left: 10%;
+            width: 500px;
+            height: 500px;
+            background: #d946ef;
+        }
+
+        /* Premium glass cards with generous breathing padding */
+        .doc-section-card {
+            background: rgba(10, 15, 30, 0.45);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 28px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .doc-section-card:hover {
+            border-color: rgba(99, 102, 241, 0.25);
+            box-shadow: 0 30px 70px rgba(99, 102, 241, 0.04);
+        }
+
+        .gradient-title {
+            background: linear-gradient(135deg, #00f2fe, #4facfe, #d946ef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.25;
+        }
+
+        .accent-title {
+            color: #818cf8;
+            border-left: 5px solid #6366f1;
+            padding-left: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        /* Table styling with spacious rows */
+        .custom-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            background: rgba(2, 6, 23, 0.4);
+        }
+        .custom-table th {
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.75rem;
+            padding: 1.25rem 1.5rem;
+        }
+        .custom-table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.25rem 1.5rem;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+        }
+        .custom-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Sidebar Sticky Styling */
+        .sticky-sidebar {
+            position: sticky;
+            top: 100px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+        
+        .sidebar-link {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 2px solid transparent;
+        }
+        .sidebar-link:hover {
+            color: #a5b4fc;
+            padding-left: 0.75rem;
+            background: rgba(99, 102, 241, 0.03);
+        }
+        .sidebar-link.active {
+            color: #38bdf8 !important;
+            border-left-color: #38bdf8;
+            font-weight: 700;
+            background: rgba(56, 189, 248, 0.05);
+            padding-left: 0.75rem;
+        }
+
+        /* Beautiful Code Snippet Playgrounds */
+        pre, code {
+            font-family: 'Fira Code', monospace;
+        }
+        pre {
+            background: #020617;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .correct-badge {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .incorrect-badge {
+            background: rgba(244, 63, 94, 0.1);
+            color: #f43f5e;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+        }
+
+        /* Interactive Simulator Styles */
+        .sim-step-active {
+            border-color: #38bdf8 !important;
+            background: rgba(56, 189, 248, 0.08) !important;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+        }
+        .stack-item {
+            animation: slideInDown 0.3s ease;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .logo-icon {
+            width: 2.25rem;
+            height: 2.25rem;
+            background: linear-gradient(135deg, #06b6d4, #6366f1, #d946ef);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+            transform: rotate(3deg);
+        }
+        .logo-text-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+        .logo-name {
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: 0.08em;
+            background: linear-gradient(135deg, #00f2fe, #4facfe, #d946ef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+        .logo-sub-row {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .logo-lang-badge {
+            font-size: 0.55rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: rgba(99, 102, 241, 0.12);
+            color: #818cf8;
+            padding: 0.05rem 0.35rem;
+            border-radius: 4px;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            letter-spacing: 0.05em;
+            line-height: 1;
+        }
+        .logo-version {
+            font-size: 0.55rem;
+            color: #94a3b8;
+            font-weight: 700;
+            opacity: 0.7;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        /* Dynamic Automata Graphics Styles */
+        .state-node {
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .state-node circle {
+            fill: #0b1329;
+            stroke: #4f46e5;
+            stroke-width: 2;
+            transition: all 0.3s ease;
+        }
+        .state-node:hover circle, .state-node.active circle {
+            stroke: #38bdf8;
+            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
+            fill: rgba(56, 189, 248, 0.08);
+        }
+        .state-node text {
+            fill: #cbd5e1;
+            font-weight: 700;
+            font-size: 11px;
+            font-family: 'Fira Code', monospace;
+            pointer-events: none;
+            text-anchor: middle;
+        }
+        .state-node:hover text, .state-node.active text {
+            fill: #ffffff;
+        }
+        .accepting-node circle.inner {
+            fill: transparent !important;
+            stroke-width: 1.25;
+            stroke: #4f46e5;
+            transition: all 0.3s ease;
+        }
+        .state-node:hover circle.inner, .state-node.active circle.inner {
+            stroke: #38bdf8;
+        }
+        .transition-edge {
+            fill: none;
+            stroke: rgba(148, 163, 184, 0.25);
+            stroke-width: 1.5;
+            transition: all 0.3s ease;
+        }
+        .transition-edge:hover, .transition-edge.active {
+            stroke: #38bdf8;
+            stroke-width: 2.5;
+            filter: drop-shadow(0 0 4px rgba(56, 189, 248, 0.5));
+        }
+        #tab-content-parser .state-node:hover circle, #tab-content-parser .state-node.active circle {
+            stroke: #a78bfa;
+            filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.6));
+            fill: rgba(167, 139, 250, 0.08);
+        }
+        #tab-content-parser .state-node:hover circle.inner, #tab-content-parser .state-node.active circle.inner {
+            stroke: #a78bfa;
+        }
+        #tab-content-parser .transition-edge:hover, #tab-content-parser .transition-edge.active {
+            stroke: #a78bfa;
+            filter: drop-shadow(0 0 4px rgba(167, 139, 250, 0.5));
+        }
+        .edge-label {
+            font-size: 9px;
+            font-family: 'Fira Code', monospace;
+            fill: #94a3b8;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        .transition-edge:hover + .edge-label, .transition-edge.active + .edge-label {
+            fill: #ffffff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- Orbs -->
+    <div class="glow-orb glow-orb-cyan"></div>
+    <div class="glow-orb glow-orb-indigo"></div>
+    <div class="glow-orb glow-orb-pink"></div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 px-10 py-5 flex justify-between items-center" style="background: rgba(2, 6, 23, 0.75); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(255, 255, 255, 0.06);">
+        <div class="logo-container">
+            <div class="logo-icon">
+                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L13.09 8.26L19 6L14.74 10.74L21 12L14.74 13.26L19 18L13.09 15.74L12 22L10.91 15.74L5 18L9.26 13.26L3 12L9.26 10.74L5 6L10.91 8.26L12 2Z"/>
+                </svg>
+            </div>
+            <div class="logo-text-group">
+                <h1 class="logo-name">NEBULA</h1>
+                <div class="logo-sub-row">
+                    <span class="logo-lang-badge">WebLang</span>
+                    <span class="logo-version">Manual Técnico</span>
+                </div>
+            </div>
+        </div>
+        <a href="/" class="hover:scale-105 transition-all text-xs font-semibold px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white flex items-center gap-2">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Volver a Nebula Studio
+        </a>
+    </header>
+
+    <!-- Main Layout Container -->
+    <div class="max-w-7xl mx-auto px-8 py-12 flex flex-col lg:flex-row gap-12 relative z-10">
+        
+        <!-- Sticky Sidebar Navigation -->
+        <aside class="w-full lg:w-72 shrink-0 block">
+            <div class="bg-slate-950/50 border border-white/5 rounded-3xl p-6 sticky-sidebar backdrop-blur-md">
+                <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest px-3 mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                    Navegación Manual
+                </h4>
+                <nav class="space-y-1.5">
+                    <a href="#introduccion" class="sidebar-link block text-sm text-slate-400 py-2.5 px-3 rounded-xl">¿Qué es WebLang?</a>
+                    <a href="#funcionamiento" class="sidebar-link block text-sm text-slate-400 py-2.5 px-3 rounded-xl">¿Cómo Compila?</a>
+                    <a href="#especificacion-formal" class="sidebar-link block text-sm text-slate-400 py-2.5 px-3 rounded-xl">Especificación de Autómatas</a>
+                    <a href="#simulador" class="sidebar-link block text-sm text-slate-400 py-2.5 px-3 rounded-xl">Simulador de Autómatas</a>
+                    <a href="#anidamiento" class="sidebar-link block text-sm text-slate-400 py-2.5 px-3 rounded-xl">Reglas de Anidamiento</a>
+                    <a href="#vocabulario" class="sidebar-link block text-sm text-slate-400 py-2.5 px-3 rounded-xl">Buscador de Comandos</a>
+                    <a href="#errores" class="sidebar-link block text-sm text-slate-400 py-2.5 px-3 rounded-xl">Diagnóstico de Errores</a>
+                    <a href="#ejemplos" class="sidebar-link block text-sm text-slate-400 py-2.5 px-3 rounded-xl">Ejemplo Completo</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Dynamic Content Grid -->
+        <main class="flex-1 space-y-16">
+            
+            <!-- SECCIÓN: INTRODUCCIÓN -->
+            <section id="introduccion" class="doc-section-card scroll-mt-28">
+                <h2 class="gradient-title text-4xl font-extrabold tracking-tight mb-4">¿Qué es el Lenguaje WebLang?</h2>
+                <div class="space-y-4 text-slate-300 leading-relaxed text-base">
+                    <p>
+                        <strong>WebLang</strong> es un lenguaje de marcado semántico y simplificado diseñado para construir interfaces web modernas y adaptables a gran velocidad. Está pensado para eliminar la sintaxis ruidosa y repetitiva del HTML5 tradicional (como el cierre manual de etiquetas, llaves angulares y ruido visual), reemplazándola por una sintaxis elegante y estructurada basada en bloques y directivas claras.
+                    </p>
+                    <p>
+                        A diferencia de otros lenguajes de marcado empíricos, la compilación de WebLang está estrictamente guiada por la **Teoría de Autómatas Formales**:
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                    <div class="bg-cyan-500/5 border border-cyan-500/10 rounded-2xl p-6 hover:bg-cyan-500/10 transition-all">
+                        <div class="text-3xl mb-3">⚡</div>
+                        <h4 class="text-base font-bold text-cyan-300 mb-2">Escaneo Léxico (FA)</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Junta caracteres letra a letra en unidades lógicas llamadas tokens. Utiliza una matriz de transición que procesa la entrada en tiempo lineal $O(N)$ de forma 100% determinista.
+                        </p>
+                    </div>
+                    <div class="bg-violet-500/5 border border-violet-500/10 rounded-2xl p-6 hover:bg-violet-500/10 transition-all">
+                        <div class="text-3xl mb-3">⚙️</div>
+                        <h4 class="text-base font-bold text-violet-300 mb-2">Análisis de Pila (PDA)</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Un autómata con memoria de pila ($\Gamma$) vigila el anidamiento jerárquico. Garantiza que cada etiqueta abierta se cierre en el orden exacto, previniendo páginas rotas.
+                        </p>
+                    </div>
+                    <div class="bg-pink-500/5 border border-pink-500/10 rounded-2xl p-6 hover:bg-pink-500/10 transition-all">
+                        <div class="text-3xl mb-3">🎨</div>
+                        <h4 class="text-base font-bold text-pink-300 mb-2">Salida Multipresentación</h4>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Genera HTML5 semántico combinando componentes de UI avanzados y layouts responsivos con 5 temas estéticos listos para producción.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN: FUNCIONAMIENTO DIDÁCTICO -->
+            <section id="funcionamiento" class="doc-section-card scroll-mt-28">
+                <h3 class="accent-title text-2xl">¿Cómo funciona la compilación en Nebula Studio?</h3>
+                
+                <div class="space-y-6 text-slate-300 text-sm leading-relaxed">
+                    <p>
+                        Para entender cómo funciona el compilador de WebLang, imaginemos que es una línea de ensamblaje en dos fases principales:
+                    </p>
+                    
+                    <div class="border border-white/5 bg-slate-950/40 rounded-2xl p-6">
+                        <h4 class="text-cyan-400 font-bold mb-2 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                            Fase 1: El Analizador Léxico (LexerFA) — "El Lector de Letras"
+                        </h4>
+                        <p class="mb-3">
+                            Su tarea es ir leyendo tu código carácter por carácter de izquierda a derecha. No comprende la estructura, solo clasifica palabras y caracteres individuales en "cajas" etiquetadas llamadas <strong>Tokens</strong>.
+                        </p>
+                        <ul class="list-disc pl-5 space-y-1.5 text-xs text-slate-400">
+                            <li>Si lee la palabra <code class="text-cyan-300">TITULO</code>, la guarda en un token de tipo <span class="text-slate-300 font-bold">COMANDO</span>.</li>
+                            <li>Si lee texto rodeado de comillas como <code class="text-cyan-300">"Hola"</code>, crea un token de tipo <span class="text-slate-300 font-bold">CADENA</span> conteniendo <code class="text-slate-300">Hola</code>.</li>
+                            <li>Si encuentra símbolos de control como <code class="text-cyan-300">;</code> o <code class="text-cyan-300">{</code>, genera tokens de tipo <span class="text-slate-300 font-bold">PUNTOCOMA</span> o <span class="text-slate-300 font-bold">LLAVE_A</span>.</li>
+                            <li><strong>Error Léxico (L001)</strong>: Si lee un carácter prohibido (como <code>$</code> o <code>@</code>) o una comilla sin cerrar, el lector se detiene e informa de inmediato.</li>
+                        </ul>
+                    </div>
+
+                    <div class="border border-white/5 bg-slate-950/40 rounded-2xl p-6">
+                        <h4 class="text-violet-400 font-bold mb-2 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-violet-400"></span>
+                            Fase 2: El Analizador Sintáctico (ParserPDA) — "El Organizador de Bloques"
+                        </h4>
+                        <p class="mb-3">
+                            Recibe la lista de tokens generados por el Lexer y verifica que sigan un orden gramatical válido. Para asegurar la jerarquía, utiliza una **Pila (Stack)**, que funciona exactamente como una pila de platos:
+                        </p>
+                        <ul class="list-disc pl-5 space-y-1.5 text-xs text-slate-400">
+                            <li>Cuando se abre un contenedor como <code class="text-violet-300">CONTENEDOR {</code>, el Parser pone el plato de <span class="text-slate-200 font-bold">div</span> en la pila (**PUSH**).</li>
+                            <li>Si adentro encuentra <code class="text-violet-300">TITULO "Hola";</code>, abre un tag <code>&lt;h1&gt;</code>, introduce el texto y genera el cierre <code>&lt;/h1&gt;</code> de inmediato debido al punto y coma <code>;</code>.</li>
+                            <li>Cuando encuentra una llave de cierre <code class="text-violet-300">}</code>, saca el plato superior de la pila (**POP**), que en este caso es el <span class="text-slate-200 font-bold">div</span>, y genera el tag de cierre <code>&lt;/div&gt;</code> correspondiente.</li>
+                            <li><strong>Error Sintáctico (P001) / Anidamiento (S001)</strong>: Si colocas un token inesperado (por ejemplo, omitir un punto y coma <code>;</code>) o intentas escribir un comando sin abrir primero su contenedor obligatorio (como un <code>ELEMENTO</code> fuera de una <code>LISTA</code>), el autómata de pila no encontrará el plato correcto en el tope y lanzará un error detallado.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN: ESPECIFICACIÓN FORMAL DE AUTÓMATAS -->
+            <section id="especificacion-formal" class="doc-section-card scroll-mt-28">
+                <h2 class="gradient-title text-4xl font-extrabold tracking-tight mb-4">Especificación Formal y Gráficos de Autómatas</h2>
+                <p class="text-slate-300 text-sm mb-8 leading-relaxed">
+                    El compilador de WebLang opera bajo el rigor científico de la teoría de la computación. Todo el procesamiento de código se divide en dos motores basados en autómatas formales estrictamente guiados por matrices:
+                </p>
+
+                <!-- Selector de Autómata (Tabs) -->
+                <div class="flex p-1.5 bg-slate-950 border border-white/10 rounded-2xl w-max mb-8">
+                    <button id="btn-tab-lexer" onclick="switchAutomataTab('lexer')" class="px-6 py-2.5 rounded-xl font-bold text-xs transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/35">
+                        1. Lexer (Autómata Finito - FA)
+                    </button>
+                    <button id="btn-tab-parser" onclick="switchAutomataTab('parser')" class="px-6 py-2.5 rounded-xl font-bold text-xs transition-all text-slate-400 hover:text-slate-200">
+                        2. Parser (Autómata de Pila - PDA)
+                    </button>
+                </div>
+
+                <!-- Contenido Tab 1: Lexer -->
+                <div id="tab-content-lexer" class="space-y-8 animate__animated animate__fadeIn">
+                    <!-- SVG & Info Panel Grid -->
+                    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 border border-white/5 bg-slate-900/35 p-6 rounded-3xl relative overflow-hidden">
+                        <!-- Background glow effect behind SVG -->
+                        <div class="absolute -top-10 -left-10 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <!-- Left: SVG FA Diagram -->
+                        <div class="xl:col-span-8 flex flex-col bg-slate-950/70 border border-white/5 rounded-2xl p-4 overflow-x-auto relative min-h-[380px] justify-center items-center">
+                            <h5 class="text-xs font-black text-cyan-400 uppercase tracking-widest self-start mb-4 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                                Diagrama de Transición de Estados (FA Léxico)
+                            </h5>
+                            
+                            <svg width="600" height="340" viewBox="0 0 600 340" class="w-full h-auto select-none">
+                                <defs>
+                                    <marker id="lexer-arrow" viewBox="0 0 10 10" refX="21" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="rgba(148, 163, 184, 0.6)" />
+                                    </marker>
+                                    <marker id="lexer-arrow-active" viewBox="0 0 10 10" refX="21" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+                                    </marker>
+                                </defs>
+
+                                <!-- Transiciones (Aristas) -->
+                                <!-- Q0 -> Q1 -->
+                                <path d="M 60,170 Q 120,105 180,85" class="transition-edge lexer-edge" data-edge="Q0-Q1" marker-end="url(#lexer-arrow)"/>
+                                <text x="110" y="110" class="edge-label font-mono">Letra, _</text>
+
+                                <!-- Q1 loop -->
+                                <path d="M 200,60 Q 200,20 220,60" class="transition-edge lexer-edge" data-edge="Q1-Q1" marker-end="url(#lexer-arrow)"/>
+                                <text x="210" y="30" class="edge-label font-mono">Letra, Núm, _</text>
+
+                                <!-- Q0 -> Q2 -->
+                                <path d="M 60,190 Q 120,255 180,275" class="transition-edge lexer-edge" data-edge="Q0-Q2" marker-end="url(#lexer-arrow)"/>
+                                <text x="110" y="255" class="edge-label font-mono">"</text>
+
+                                <!-- Q2 loop -->
+                                <path d="M 200,300 Q 200,340 220,300" class="transition-edge lexer-edge" data-edge="Q2-Q2" marker-end="url(#lexer-arrow)"/>
+                                <text x="210" y="335" class="edge-label font-mono">No " y No \n</text>
+
+                                <!-- Q2 -> Q3 -->
+                                <path d="M 220,280 L 360,280" class="transition-edge lexer-edge" data-edge="Q2-Q3" marker-end="url(#lexer-arrow)"/>
+                                <text x="290" y="272" class="edge-label font-mono">"</text>
+
+                                <!-- Q0 -> Q4 -->
+                                <path d="M 70,180 L 180,180" class="transition-edge lexer-edge" data-edge="Q0-Q4" marker-end="url(#lexer-arrow)"/>
+                                <text x="120" y="172" class="edge-label font-mono">/</text>
+
+                                <!-- Q4 -> Q5 -->
+                                <path d="M 220,180 L 360,180" class="transition-edge lexer-edge" data-edge="Q4-Q5" marker-end="url(#lexer-arrow)"/>
+                                <text x="290" y="172" class="edge-label font-mono">/</text>
+
+                                <!-- Q5 loop -->
+                                <path d="M 380,160 Q 380,120 400,160" class="transition-edge lexer-edge" data-edge="Q5-Q5" marker-end="url(#lexer-arrow)"/>
+                                <text x="390" y="135" class="edge-label font-mono">No \n</text>
+
+                                <!-- Q5 -> Q0 (retorno) -->
+                                <path d="M 380,200 Q 220,240 65,195" class="transition-edge lexer-edge" data-edge="Q5-Q0" marker-end="url(#lexer-arrow)"/>
+                                <text x="230" y="222" class="edge-label font-mono">\n (regresa)</text>
+
+                                <!-- Q0 -> Q7 -->
+                                <path d="M 60,160 Q 240,40 500,45" class="transition-edge lexer-edge" data-edge="Q0-Q7" marker-end="url(#lexer-arrow)"/>
+                                <text x="270" y="60" class="edge-label font-mono">;</text>
+
+                                <!-- Q0 -> Q8 -->
+                                <path d="M 65,165 Q 260,110 500,115" class="transition-edge lexer-edge" data-edge="Q0-Q8" marker-end="url(#lexer-arrow)"/>
+                                <text x="270" y="125" class="edge-label font-mono">{</text>
+
+                                <!-- Q0 -> Q9 -->
+                                <path d="M 70,175 Q 280,180 500,185" class="transition-edge lexer-edge" data-edge="Q0-Q9" marker-end="url(#lexer-arrow)"/>
+                                <text x="270" y="175" class="edge-label font-mono">}</text>
+
+                                <!-- Estados (Nodos) -->
+                                <!-- Q0 -->
+                                <g class="state-node lexer-node active" data-state="Q0" onclick="showStateDetail('lexer', 'Q0')">
+                                    <circle cx="50" cy="180" r="20" />
+                                    <text x="50" y="184">Q0</text>
+                                </g>
+
+                                <!-- Q1 -->
+                                <g class="state-node lexer-node" data-state="Q1" onclick="showStateDetail('lexer', 'Q1')">
+                                    <circle cx="200" cy="80" r="20" />
+                                    <text x="200" y="84">Q1</text>
+                                </g>
+
+                                <!-- Q2 -->
+                                <g class="state-node lexer-node" data-state="Q2" onclick="showStateDetail('lexer', 'Q2')">
+                                    <circle cx="200" cy="280" r="20" />
+                                    <text x="200" y="284">Q2</text>
+                                </g>
+
+                                <!-- Q3 (Aceptación) -->
+                                <g class="state-node lexer-node accepting-node" data-state="Q3" onclick="showStateDetail('lexer', 'Q3')">
+                                    <circle cx="380" cy="280" r="20" />
+                                    <circle cx="380" cy="280" r="16" class="inner" />
+                                    <text x="380" y="284">Q3</text>
+                                </g>
+
+                                <!-- Q4 -->
+                                <g class="state-node lexer-node" data-state="Q4" onclick="showStateDetail('lexer', 'Q4')">
+                                    <circle cx="200" cy="180" r="20" />
+                                    <text x="200" y="184">Q4</text>
+                                </g>
+
+                                <!-- Q5 -->
+                                <g class="state-node lexer-node" data-state="Q5" onclick="showStateDetail('lexer', 'Q5')">
+                                    <circle cx="380" cy="180" r="20" />
+                                    <text x="380" y="184">Q5</text>
+                                </g>
+
+                                <!-- Q7 (Aceptación) -->
+                                <g class="state-node lexer-node accepting-node" data-state="Q7" onclick="showStateDetail('lexer', 'Q7')">
+                                    <circle cx="520" cy="50" r="20" />
+                                    <circle cx="520" cy="50" r="16" class="inner" />
+                                    <text x="520" y="54">Q7</text>
+                                </g>
+
+                                <!-- Q8 (Aceptación) -->
+                                <g class="state-node lexer-node accepting-node" data-state="Q8" onclick="showStateDetail('lexer', 'Q8')">
+                                    <circle cx="520" cy="120" r="20" />
+                                    <circle cx="520" cy="120" r="16" class="inner" />
+                                    <text x="520" y="124">Q8</text>
+                                </g>
+
+                                <!-- Q9 (Aceptación) -->
+                                <g class="state-node lexer-node accepting-node" data-state="Q9" onclick="showStateDetail('lexer', 'Q9')">
+                                    <circle cx="520" cy="190" r="20" />
+                                    <circle cx="520" cy="190" r="16" class="inner" />
+                                    <text x="520" y="194">Q9</text>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <!-- Right: Dynamic State Details Panel -->
+                        <div class="xl:col-span-4 flex flex-col bg-slate-950/40 border border-white/5 rounded-2xl p-6 h-full justify-between min-h-[340px]">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Inspección de Estado</h4>
+                                <div id="lexer-state-details" class="space-y-4">
+                                    <!-- Dynamic Default Content -->
+                                    <div class="text-center py-12">
+                                        <div class="text-3xl mb-3">🖱️</div>
+                                        <p class="text-xs text-slate-400 italic">Haz clic en cualquier nodo o estado del autómata léxico para analizar su comportamiento, alfabeto y transiciones.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-white/5 text-[10px] text-slate-500 leading-relaxed font-mono">
+                                * Los estados con doble círculo son estados finales de Aceptación (Aceptan Token).
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Especificación Matemática Lexer -->
+                    <div class="bg-slate-950/40 border border-white/5 rounded-2xl p-6">
+                        <h4 class="text-cyan-400 font-bold text-sm mb-4 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                            Definición Formal del Autómata Finito Léxico (FA)
+                        </h4>
+                        <div class="text-xs text-slate-300 leading-relaxed space-y-4">
+                            <p>
+                                El <strong>LexerFA</strong> es un autómata finito determinista (DFA) que realiza el escaneo de caracteres. Matemáticamente se define como una 5-tupla <code class="text-cyan-300 font-mono">M<sub>L</sub> = (Q, &Sigma;, &delta;, q<sub>0</sub>, F)</code>:
+                            </p>
+                            <ul class="list-disc pl-5 space-y-2 text-slate-400">
+                                <li><strong>Q (Estados)</strong>: <code class="text-slate-300 font-mono">{Q<sub>0</sub>, Q<sub>1</sub>, Q<sub>2</sub>, Q<sub>3</sub>, Q<sub>4</sub>, Q<sub>5</sub>, Q<sub>7</sub>, Q<sub>8</sub>, Q<sub>9</sub>, Q<sub>error</sub>}</code></li>
+                                <li><strong>&Sigma; (Alfabeto)</strong>: Letras, Dígitos, Comillas <code>"</code>, Punto y coma <code>;</code>, Llaves <code>{ }</code>, Barra diagonal <code>/</code>, Espacios y Saltos de línea.</li>
+                                <li><strong>q<sub>0</sub> (Estado Inicial)</strong>: <code class="text-slate-300 font-mono">Q<sub>0</sub></code> (Inicio de lexema).</li>
+                                <li><strong>F (Estados Finales de Aceptación)</strong>: <code class="text-slate-300 font-mono">{Q<sub>1</sub>, Q<sub>3</sub>, Q<sub>7</sub>, Q<sub>8</sub>, Q<sub>9</sub>}</code> (al transitar al estado especial -2, se emite el token correspondiente al último estado válido y se mantiene el carácter leído para el siguiente token).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contenido Tab 2: Parser -->
+                <div id="tab-content-parser" class="hidden space-y-8 animate__animated animate__fadeIn">
+                    <!-- SVG & Info Panel Grid -->
+                    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 border border-white/5 bg-slate-900/35 p-6 rounded-3xl relative overflow-hidden">
+                        <!-- Background glow effect behind SVG -->
+                        <div class="absolute -top-10 -left-10 w-48 h-48 bg-violet-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <!-- Left: SVG PDA Diagram -->
+                        <div class="xl:col-span-8 flex flex-col bg-slate-950/70 border border-white/5 rounded-2xl p-4 overflow-x-auto relative min-h-[380px] justify-center items-center">
+                            <h5 class="text-xs font-black text-violet-400 uppercase tracking-widest self-start mb-4 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-violet-400 animate-pulse"></span>
+                                Diagrama de Transición de Estados (PDA Sintáctico de Pila)
+                            </h5>
+                            
+                            <svg width="600" height="340" viewBox="0 0 600 340" class="w-full h-auto select-none">
+                                <defs>
+                                    <marker id="parser-arrow" viewBox="0 0 10 10" refX="21" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="rgba(148, 163, 184, 0.6)" />
+                                    </marker>
+                                    <marker id="parser-arrow-active" viewBox="0 0 10 10" refX="21" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa" />
+                                    </marker>
+                                </defs>
+
+                                <!-- Transiciones (Aristas) -->
+                                <!-- Q0 -> Q1 -->
+                                <path d="M 90,165 Q 165,100 220,100" class="transition-edge parser-edge" data-edge="Q0-Q1" marker-end="url(#parser-arrow)"/>
+                                <text x="120" y="115" class="edge-label font-mono text-center">COMANDO (Push Tag)</text>
+
+                                <!-- Q1 -> Q2 -->
+                                <path d="M 260,100 L 400,100" class="transition-edge parser-edge" data-edge="Q1-Q2" marker-end="url(#parser-arrow)"/>
+                                <text x="295" y="92" class="edge-label font-mono">CADENA (Valor)</text>
+
+                                <!-- Q2 -> Q0 (Punto y coma) -->
+                                <path d="M 410,115 Q 330,220 95,185" class="transition-edge parser-edge" data-edge="Q2-Q0" marker-end="url(#parser-arrow)"/>
+                                <text x="315" y="170" class="edge-label font-mono">; (Pop Tag)</text>
+
+                                <!-- Q0 -> Q3 -->
+                                <path d="M 90,195 Q 165,260 220,260" class="transition-edge parser-edge" data-edge="Q0-Q3" marker-end="url(#parser-arrow)"/>
+                                <text x="125" y="245" class="edge-label font-mono">ESP_CMD (ENLACE...)</text>
+
+                                <!-- Q3 -> Q4 -->
+                                <path d="M 260,260 L 400,260" class="transition-edge parser-edge" data-edge="Q3-Q4" marker-end="url(#parser-arrow)"/>
+                                <text x="295" y="252" class="edge-label font-mono">CADENA (Param 1)</text>
+
+                                <!-- Q4 -> Q2 -->
+                                <path d="M 425,245 Q 460,170 425,115" class="transition-edge parser-edge" data-edge="Q4-Q2" marker-end="url(#parser-arrow)"/>
+                                <text x="450" y="180" class="edge-label font-mono">CADENA (Param 2)</text>
+
+                                <!-- Q0 -> Q5 -->
+                                <path d="M 85,160 Q 280,-10 500,160" class="transition-edge parser-edge" data-edge="Q0-Q5" marker-end="url(#parser-arrow)"/>
+                                <text x="290" y="25" class="edge-label font-mono">ELEMENTO (Push li)</text>
+
+                                <!-- Q5 -> Q0 -->
+                                <path d="M 500,185 L 100,180" class="transition-edge parser-edge" data-edge="Q5-Q0" marker-end="url(#parser-arrow)"/>
+                                <text x="290" y="195" class="edge-label font-mono">; ó LLAVE_C (Pop li)</text>
+
+                                <!-- Q0 self-loop (Brackets) -->
+                                <path d="M 75,160 Q 50,110 80,160" class="transition-edge parser-edge" data-edge="Q0-Q0" marker-end="url(#parser-arrow)"/>
+                                <text x="35" y="125" class="edge-label font-mono">{ / }</text>
+
+                                <!-- Estados (Nodos) -->
+                                <!-- Q0 -->
+                                <g class="state-node parser-node active" data-state="Q0" onclick="showStateDetail('parser', 'Q0')">
+                                    <circle cx="80" cy="180" r="20" style="stroke: #818cf8;"/>
+                                    <text x="80" y="184">Q0</text>
+                                </g>
+
+                                <!-- Q1 -->
+                                <g class="state-node parser-node" data-state="Q1" onclick="showStateDetail('parser', 'Q1')">
+                                    <circle cx="240" cy="90" r="20" style="stroke: #818cf8;"/>
+                                    <text x="240" y="94">Q1</text>
+                                </g>
+
+                                <!-- Q2 -->
+                                <g class="state-node parser-node" data-state="Q2" onclick="showStateDetail('parser', 'Q2')">
+                                    <circle cx="420" cy="90" r="20" style="stroke: #818cf8;"/>
+                                    <text x="420" y="94">Q2</text>
+                                </g>
+
+                                <!-- Q3 -->
+                                <g class="state-node parser-node" data-state="Q3" onclick="showStateDetail('parser', 'Q3')">
+                                    <circle cx="240" cy="270" r="20" style="stroke: #818cf8;"/>
+                                    <text x="240" y="274">Q3</text>
+                                </g>
+
+                                <!-- Q4 -->
+                                <g class="state-node parser-node" data-state="Q4" onclick="showStateDetail('parser', 'Q4')">
+                                    <circle cx="420" cy="270" r="20" style="stroke: #818cf8;"/>
+                                    <text x="420" y="274">Q4</text>
+                                </g>
+
+                                <!-- Q5 -->
+                                <g class="state-node parser-node" data-state="Q5" onclick="showStateDetail('parser', 'Q5')">
+                                    <circle cx="510" cy="180" r="20" style="stroke: #818cf8;"/>
+                                    <text x="510" y="184">Q5</text>
+                                </g>
+
+                                <!-- Q99 (Aceptación EOF) -->
+                                <g class="state-node parser-node accepting-node" data-state="Q99" onclick="showStateDetail('parser', 'Q99')">
+                                    <circle cx="510" cy="270" r="20" style="stroke: #818cf8;"/>
+                                    <circle cx="510" cy="270" r="16" class="inner" />
+                                    <text x="510" y="274">Q99</text>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <!-- Right: Dynamic State Details Panel -->
+                        <div class="xl:col-span-4 flex flex-col bg-slate-950/40 border border-white/5 rounded-2xl p-6 h-full justify-between min-h-[340px]">
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Inspección de Estado</h4>
+                                <div id="parser-state-details" class="space-y-4">
+                                    <!-- Dynamic Default Content -->
+                                    <div class="text-center py-12">
+                                        <div class="text-3xl mb-3">💾</div>
+                                        <p class="text-xs text-slate-400 italic">Haz clic en cualquier nodo o estado del autómata sintáctico para analizar su comportamiento, manipulación de la pila ($\Gamma$) y acciones asociadas.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-white/5 text-[10px] text-slate-500 leading-relaxed font-mono">
+                                * El estado Q99 (EOF) es el estado de aceptación formal donde la pila se vacía por completo hasta el símbolo base (#).
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Especificación Matemática Parser -->
+                    <div class="bg-slate-950/40 border border-white/5 rounded-2xl p-6">
+                        <h4 class="text-violet-400 font-bold text-sm mb-4 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-violet-400"></span>
+                            Definición Formal del Autómata con Pila (PDA)
+                        </h4>
+                        <div class="text-xs text-slate-300 leading-relaxed space-y-4">
+                            <p>
+                                El <strong>ParserPDA</strong> es un autómata de pila no determinista formalizado mediante un mapeo directo en matriz, encargado de evaluar el anidamiento y la sintaxis. Se define matemáticamente como una 7-tupla <code class="text-violet-300 font-mono font-bold">M<sub>P</sub> = (Q, &Sigma;, &Gamma;, &delta;, q<sub>0</sub>, Z<sub>0</sub>, F)</code>:
+                            </p>
+                            <ul class="list-disc pl-5 space-y-2 text-slate-400">
+                                <li><strong>Q (Estados)</strong>: <code class="text-slate-300 font-mono">{Q<sub>0</sub>, Q<sub>1</sub>, Q<sub>2</sub>, Q<sub>3</sub>, Q<sub>4</sub>, Q<sub>5</sub>, Q<sub>99</sub>}</code></li>
+                                <li><strong>&Sigma; (Alfabeto de Entrada)</strong>: <code class="text-slate-300 font-mono">{COMANDO, CADENA, PUNTOCOMA, LLAVE\_A, LLAVE\_C, EOF}</code></li>
+                                <li><strong>&Gamma; (Alfabeto de la Pila)</strong>: <code class="text-slate-300 font-mono">{h1, h2, p, ul, li, div, section, a, table, tr, td, &dots;, #}</code></li>
+                                <li><strong>q<sub>0</sub> (Estado Inicial)</strong>: <code class="text-slate-300 font-mono">Q<sub>0</sub></code></li>
+                                <li><strong>Z<sub>0</sub> (Símbolo inicial de la pila)</strong>: <code class="text-slate-300 font-mono">#</code></li>
+                                <li><strong>F (Estados Finales / Aceptación)</strong>: <code class="text-slate-300 font-mono">{Q<sub>99</sub>}</code> (se alcanza en el token <code class="text-slate-300">EOF</code> si la pila contiene únicamente el símbolo inicial <code class="text-slate-300">#</code>).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN: SIMULADOR INTERACTIVO -->
+            <section id="simulador" class="doc-section-card scroll-mt-28">
+                <h3 class="accent-title text-2xl">Simulador Visual de Autómatas</h3>
+                <p class="text-slate-300 text-sm mb-6">
+                    Escribe o selecciona un trozo de código WebLang a continuación y presiona **"Simular Paso a Paso"** para ver visualmente cómo interactúan el Lexer y la Pila del Parser para construir la jerarquía HTML5 en tiempo real.
+                </p>
+
+                <!-- Simulador UI Wrapper -->
+                <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 border border-white/5 bg-slate-900/35 p-6 rounded-2xl">
+                    <!-- Left Side: Simulator Code Input & Controls -->
+                    <div class="xl:col-span-5 flex flex-col gap-4">
+                        <label class="text-xs font-bold text-slate-400 uppercase tracking-widest">Código de Entrada</label>
+                        <select id="sim-preset-select" class="bg-slate-950 border border-white/10 text-xs rounded-xl p-2.5 text-slate-200 outline-none">
+                            <option value="simple">Ejemplo Simple (TITULO y PARRAFO)</option>
+                            <option value="lista">Ejemplo con Lista (Anidamiento)</option>
+                            <option value="error">Ejemplo con Error (Falta Contenedor)</option>
+                        </select>
+                        <textarea id="sim-code-input" class="bg-slate-950 border border-white/10 text-xs font-mono rounded-xl p-4 text-emerald-400 h-36 outline-none focus:border-cyan-500" spellcheck="false"></textarea>
+                        
+                        <div class="flex gap-2">
+                            <button id="sim-btn-start" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs py-3 rounded-xl transition-all">Iniciar Simulación</button>
+                            <button id="sim-btn-next" disabled class="flex-1 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 text-white font-bold text-xs py-3 rounded-xl transition-all">Siguiente Paso &gt;</button>
+                        </div>
+                        <div id="sim-status-msg" class="text-xs text-slate-400 italic"></div>
+                    </div>
+
+                    <!-- Middle Side: Lexer Output & Parser Stack -->
+                    <div class="xl:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Lexer tokens processed -->
+                        <div class="flex flex-col gap-3">
+                            <h5 class="text-xs font-black text-cyan-400 uppercase tracking-widest">Tokens Escaneados</h5>
+                            <div id="sim-lexer-tokens" class="bg-slate-950/70 border border-white/5 rounded-xl p-4 h-64 overflow-y-auto space-y-2 text-xs">
+                                <span class="text-slate-500 italic">Inicia la simulación para ver los tokens...</span>
+                            </div>
+                        </div>
+
+                        <!-- Parser Stack Status -->
+                        <div class="flex flex-col gap-3">
+                            <h5 class="text-xs font-black text-violet-400 uppercase tracking-widest">Pila del Parser (&#915;)</h5>
+                            <div class="flex flex-col bg-slate-950/70 border border-white/5 rounded-xl p-4 h-64 justify-end items-center relative overflow-hidden">
+                                <div id="sim-stack-container" class="w-full flex flex-col gap-2 overflow-y-auto max-h-full pb-2">
+                                    <!-- Dynamic stack plates go here -->
+                                </div>
+                                <div class="w-full border-t-2 border-dashed border-violet-500/30 pt-2 text-center text-[10px] text-slate-500 font-mono">
+                                    Base de la Pila (#)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN: REGLAS DE ANIDAMIENTO -->
+            <section id="anidamiento" class="doc-section-card scroll-mt-28">
+                <h3 class="accent-title text-2xl">Reglas de Anidamiento y Jerarquía</h3>
+                <p class="text-slate-300 text-sm mb-6 leading-relaxed">
+                    Al igual que en un autómata formal, existen restricciones sobre qué símbolos pueden estar arriba de otros en la pila. La siguiente guía especifica la estructura y jerarquía de contención obligatoria para escribir código sin fallos sintácticos:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-950/40 border border-white/5 rounded-2xl p-6">
+                        <h4 class="text-emerald-400 font-bold text-sm mb-4 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                            Restricciones del Autómata (Uso de Pila)
+                        </h4>
+                        <div class="space-y-4 text-xs text-slate-300">
+                            <div>
+                                <h5 class="font-bold text-slate-100 uppercase tracking-wider text-[11px] mb-1">Elementos de Lista</h5>
+                                <p class="text-slate-400 leading-relaxed">
+                                    El comando <code class="text-slate-300">ELEMENTO</code> sólo puede invocarse si en el tope de la pila está <code class="text-emerald-400">ul</code> (es decir, dentro de un bloque <code class="text-slate-300">LISTA { ... }</code>) o <code class="text-emerald-400">li</code> (para reemplazo implícito).
+                                </p>
+                            </div>
+                            <hr class="border-white/5">
+                            <div>
+                                <h5 class="font-bold text-slate-100 uppercase tracking-wider text-[11px] mb-1">Sublistas Anidadas</h5>
+                                <p class="text-slate-400 leading-relaxed">
+                                    El comando <code class="text-slate-300">SUBLISTA</code> sólo puede declararse dentro de un <code class="text-slate-300">ELEMENTO</code> (es decir, cuando <code class="text-emerald-400">li</code> está en el tope de la pila).
+                                </p>
+                            </div>
+                            <hr class="border-white/5">
+                            <div>
+                                <h5 class="font-bold text-slate-100 uppercase tracking-wider text-[11px] mb-1">Celdas de Tabla</h5>
+                                <p class="text-slate-400 leading-relaxed">
+                                    El comando <code class="text-slate-300">FILA</code> exige estar dentro de <code class="text-emerald-400">table</code>, y <code class="text-slate-300">CELDA</code> exige estar directamente dentro de una <code class="text-emerald-400">tr</code> (<code class="text-slate-300">FILA { ... }</code>).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950/40 border border-white/5 rounded-2xl p-6 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-cyan-400 font-bold text-sm mb-4 flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                                Estructura de Árbol HTML5 Sugerida
+                            </h4>
+                            <pre class="p-4 rounded-xl text-[10px] leading-relaxed text-slate-300 overflow-x-auto">
+Raíz
+ ├── NAVEGACION
+ ├── HERO
+ ├── CONTENEDOR
+ │    ├── GRID
+ │    │    ├── COLUMNA
+ │    │    └── COLUMNA
+ │    ├── TABLA
+ │    │    └── FILA
+ │    │         └── CELDA
+ │    ├── FORMULARIO
+ │    │    ├── ENTRADA
+ │    │    └── BOTON
+ │    └── CONSULTA
+ │         └── DATO
+ └── PIE</pre>
+                        </div>
+                        <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-3 text-[11px] text-slate-400 leading-relaxed mt-4">
+                            <strong>Nota:</strong> Los delimitadores <code>{ }</code> actúan abriendo y cerrando los tags contenedores, mientras que <code>;</code> cierra las instrucciones lineales que no llevan bloques.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN: VOCABULARIO INTERACTIVO (Buscador de Comandos) -->
+            <section id="vocabulario" class="doc-section-card scroll-mt-28">
+                <h3 class="accent-title text-2xl">Buscador y Cheat Sheet de Comandos</h3>
+                <p class="text-slate-300 text-sm mb-6">
+                    Consulta la sintaxis exacta, traducción HTML5 y un ejemplo de uso de todos los comandos soportados por el motor Nebula. Usa el buscador o filtra por categorías.
+                </p>
+
+                <!-- Controls Layout -->
+                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                    <input type="text" id="cmd-search-input" placeholder="Buscar comando (ej. GRID, BOTON, ELEMENTO)..." class="flex-1 bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 placeholder-slate-500 outline-none focus:border-indigo-500">
+                    <select id="cmd-category-select" class="bg-slate-900 border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none cursor-pointer">
+                        <option value="all">Todas las categorías</option>
+                        <option value="block">Contenedores de Bloque</option>
+                        <option value="text">Texto y Formato</option>
+                        <option value="special">Elementos Especiales</option>
+                        <option value="form">Formularios</option>
+                        <option value="data">Estructuras de Datos y Tablas</option>
+                        <option value="ui">UI Avanzado</option>
+                    </select>
+                </div>
+
+                <!-- Command Cards Grid -->
+                <div id="command-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Dynamic command cards will be populated here by JavaScript -->
+                </div>
+            </section>
+
+            <!-- SECCIÓN: DIAGNÓSTICO DE ERRORES -->
+            <section id="errores" class="doc-section-card scroll-mt-28">
+                <h3 class="accent-title text-2xl">Catálogo de Errores y Diagnóstico</h3>
+                <p class="text-slate-300 text-sm mb-8 leading-relaxed">
+                    La pila de errores de Nebula clasifica minuciosamente cada anomalía en cuatro códigos distintos, lo que te permite comprender y corregir el marcado inmediatamente:
+                </p>
+
+                <div class="space-y-12">
+                    
+                    <!-- L001 -->
+                    <div class="bg-rose-500/5 border border-rose-500/10 rounded-3xl p-8 hover:bg-rose-500/10 transition-all space-y-4">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-rose-500 text-white font-black px-3 py-1 rounded-lg text-xs tracking-wider font-mono">L001</span>
+                                <h4 class="text-xl font-bold text-rose-300">Error Léxico (Lexema Inválido)</h4>
+                            </div>
+                            <span class="text-xs text-rose-400 font-mono tracking-widest uppercase">Módulo: Lexer Determinista</span>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Ocurre cuando el escáner se topa con un carácter ilegal que no pertenece al alfabeto del lenguaje (como <code>$</code>, <code>@</code>, <code>%</code>), o cuando inicias una cadena de texto con comillas <code>"</code> pero el renglón finaliza antes de cerrarla.
+                        </p>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+                            <div class="bg-slate-950/60 p-5 rounded-2xl border border-rose-500/15">
+                                <span class="incorrect-badge block font-bold text-[10px] uppercase tracking-wider mb-3 px-2 py-1 rounded w-max">
+                                    ❌ Incorrecto (Falla)
+                                </span>
+                                <pre class="p-3 rounded-xl text-xs text-rose-400 overflow-x-auto">PARRAFO <span class="underline">"Bienvenidos al manual @ Nebula</span> ;</pre>
+                            </div>
+                            <div class="bg-slate-950/60 p-5 rounded-2xl border border-emerald-500/15">
+                                <span class="correct-badge block font-bold text-[10px] uppercase tracking-wider mb-3 px-2 py-1 rounded w-max">
+                                    ✨ Correcto (Compila)
+                                </span>
+                                <pre class="p-3 rounded-xl text-xs text-emerald-400 overflow-x-auto">PARRAFO "Bienvenidos al manual Nebula" ;</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- C001 -->
+                    <div class="bg-rose-500/5 border border-rose-500/10 rounded-3xl p-8 hover:bg-rose-500/10 transition-all space-y-4">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-rose-500 text-white font-black px-3 py-1 rounded-lg text-xs tracking-wider font-mono">C001</span>
+                                <h4 class="text-xl font-bold text-rose-300">Comando No Válido (Palabra Clave Desconocida)</h4>
+                            </div>
+                            <span class="text-xs text-rose-400 font-mono tracking-widest uppercase">Módulo: Diccionario de Gramática</span>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Ocurre cuando el compilador procesa un lexema que tiene toda la estructura sintáctica de un comando (en mayúsculas y sin comillas), pero su palabra clave no está registrada en el vocabulario oficial.
+                        </p>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+                            <div class="bg-slate-950/60 p-5 rounded-2xl border border-rose-500/15">
+                                <span class="incorrect-badge block font-bold text-[10px] uppercase tracking-wider mb-3 px-2 py-1 rounded w-max">
+                                    ❌ Incorrecto (Falla)
+                                </span>
+                                <pre class="p-3 rounded-xl text-xs text-rose-400 overflow-x-auto"><span class="underline">IMPRIMIR</span> "Hola Mundo" ;</pre>
+                            </div>
+                            <div class="bg-slate-950/60 p-5 rounded-2xl border border-emerald-500/15">
+                                <span class="correct-badge block font-bold text-[10px] uppercase tracking-wider mb-3 px-2 py-1 rounded w-max">
+                                    ✨ Correcto (Compila)
+                                </span>
+                                <pre class="p-3 rounded-xl text-xs text-emerald-400 overflow-x-auto">PARRAFO "Hola Mundo" ;</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- P001 -->
+                    <div class="bg-rose-500/5 border border-rose-500/10 rounded-3xl p-8 hover:bg-rose-500/10 transition-all space-y-4">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-rose-500 text-white font-black px-3 py-1 rounded-lg text-xs tracking-wider font-mono">P001</span>
+                                <h4 class="text-xl font-bold text-rose-300">Error Sintáctico (Token Inesperado)</h4>
+                            </div>
+                            <span class="text-xs text-rose-400 font-mono tracking-widest uppercase">Módulo: Autómatas Sintácticos</span>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Se genera al romper la secuencia de transición esperada. Por ejemplo, al omitir el delimitador punto y coma <code>;</code> al finalizar una directiva lineal, o escribir dos cadenas de texto continuas sin el comando correspondiente.
+                        </p>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+                            <div class="bg-slate-950/60 p-5 rounded-2xl border border-rose-500/15">
+                                <span class="incorrect-badge block font-bold text-[10px] uppercase tracking-wider mb-3 px-2 py-1 rounded w-max">
+                                    ❌ Incorrecto (Falla)
+                                </span>
+                                <pre class="p-3 rounded-xl text-xs text-rose-400 overflow-x-auto">TITULO "Bienvenidos" <span class="underline">/* Falta el ; */</span>
+PARRAFO "Este texto fallará" ;</pre>
+                            </div>
+                            <div class="bg-slate-950/60 p-5 rounded-2xl border border-emerald-500/15">
+                                <span class="correct-badge block font-bold text-[10px] uppercase tracking-wider mb-3 px-2 py-1 rounded w-max">
+                                    ✨ Correcto (Compila)
+                                </span>
+                                <pre class="p-3 rounded-xl text-xs text-emerald-400 overflow-x-auto">TITULO "Bienvenidos" ;
+PARRAFO "Este texto funcionará perfectamente." ;</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- S001 -->
+                    <div class="bg-rose-500/5 border border-rose-500/10 rounded-3xl p-8 hover:bg-rose-500/10 transition-all space-y-4">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-rose-500 text-white font-black px-3 py-1 rounded-lg text-xs tracking-wider font-mono">S001</span>
+                                <h4 class="text-xl font-bold text-rose-300">Error de Anidamiento (Estructura de Pila)</h4>
+                            </div>
+                            <span class="text-xs text-rose-400 font-mono tracking-widest uppercase">Módulo: Integridad de Pila</span>
+                        </div>
+                        <p class="text-sm text-slate-400 leading-relaxed">
+                            Es un error semántico/estructural jerárquico. Ocurre cuando invocas un comando hijo que requiere un elemento padre obligatorio en la pila sintáctica, pero el parser detecta que se declaró fuera del contenedor correspondiente.
+                        </p>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+                            <div class="bg-slate-950/60 p-5 rounded-2xl border border-rose-500/15">
+                                <span class="incorrect-badge block font-bold text-[10px] uppercase tracking-wider mb-3 px-2 py-1 rounded w-max">
+                                    ❌ Incorrecto (Falla)
+                                </span>
+                                <pre class="p-3 rounded-xl text-xs text-rose-400 overflow-x-auto"><span class="underline">ELEMENTO</span> "Este elemento flota libremente" ;</pre>
+                            </div>
+                            <div class="bg-slate-950/60 p-5 rounded-2xl border border-emerald-500/15">
+                                <span class="correct-badge block font-bold text-[10px] uppercase tracking-wider mb-3 px-2 py-1 rounded w-max">
+                                    ✨ Correcto (Compila)
+                                </span>
+                                <pre class="p-3 rounded-xl text-xs text-emerald-400 overflow-x-auto">LISTA {
+    ELEMENTO "Ahora sí está dentro de LISTA" ;
+}</pre>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- SECCIÓN: EJEMPLO COMPLETO -->
+            <section id="ejemplos" class="doc-section-card scroll-mt-28">
+                <h3 class="accent-title text-2xl">Ejemplo de Código Completo y Complejo</h3>
+                <p class="text-slate-300 text-sm mb-6">
+                    A continuación puedes observar una plantilla estructurada y variada en WebLang de alta fidelidad. Puedes hacer clic en copiar y pegarla directamente en el Nebula Editor para compilarla y jugar con los 5 temas de previsualización:
+                </p>
+
+                <div class="relative">
+                    <button onclick="copyFullExample()" class="absolute top-4 right-4 bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-semibold px-4 py-2 rounded-lg transition-all text-slate-300 flex items-center gap-1.5 z-10">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                        </svg>
+                        Copiar Código
+                    </button>
+                    <pre id="full-example-code" class="p-6 rounded-2xl text-[11px] leading-relaxed text-cyan-300 overflow-x-auto pt-14">// ==================================================
+// EJEMPLO MAESTRO: WebLang Studio Showcase
+// ==================================================
+
+NAVEGACION {
+    TITULO "Nebula Space OS";
+    ENLACE "https://google.com" "Explorar Docs";
+    ENLACE "/docs" "Manual Técnico";
+}
+
+HERO {
+    ENCABEZADO "El Futuro del Marcado Web";
+    PARRAFO "Diseñado para transpilar pseudocódigo a HTML5 semántico utilizando teoría matemática de autómatas.";
+    BOTON "Iniciar Proyecto";
+}
+
+CONTENEDOR {
+    ENCABEZADO "Características de WebLang";
+    
+    GRID {
+        SECCION {
+            ENCABEZADO "Autómatas de Pila";
+            PARRAFO "Validación estricta del orden jerárquico de las etiquetas mediante transiciones algebraicas en una pila.";
+        }
+        
+        SECCION {
+            ENCABEZADO "Sintaxis Limpia";
+            PARRAFO "Olvídate de las etiquetas ruidosas. Escribe comandos claros con bloques bien delimitados.";
+        }
+        
+        SECCION {
+            ENCABEZADO "Alto Rendimiento";
+            PARRAFO "El análisis de tokens funciona mediante matrices en O(N) sin estructuras IF complejas.";
+        }
+    }
+
+    DIVISOR;
+
+    ARTICULO {
+        ENCABEZADO "Estilos de Texto Admitidos";
+        PARRAFO "WebLang admite una rica gama de formatos en línea:";
+        
+        LISTA {
+            ELEMENTO { NEGRILLA "Texto en Negrita para ideas fuertes."; }
+            ELEMENTO { CURSIVA "Texto en Cursiva para comentarios."; }
+            ELEMENTO { SUBRAYADO "Texto Subrayado de importancia."; }
+            ELEMENTO { PEQUENO "Notas pequeñas de pie de página."; }
+            ELEMENTO { CODIGO "print('Hello WebLang!');"; }
+        }
+    }
+
+    DIVISOR;
+
+    CONSULTA {
+        ENCABEZADO "Dashboard de Compilación";
+        DATO "Tokenizador Estado" "Activo";
+        DATO "Parser de Pila" "Sin Errores";
+        PROGRESO "100" "100";
+    }
+}
+
+PIE {
+    PARRAFO "© 2026 WebLang Studio - Compilación formal y diseño premium.";
+}</pre>
+                </div>
+            </section>
+
+            <!-- Bottom return button -->
+            <div class="text-center pt-6">
+                <a href="/" class="inline-block hover:scale-105 transition-all px-12 py-4 text-base font-bold rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 shadow-lg shadow-indigo-600/35 hover:shadow-indigo-600/50 text-white">
+                    ← Volver al Editor Nebula
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <!-- Active Navigation Link Scrolling Highlighting Script & Simulator Logic & Cheat Sheet Logic -->
+    <script>
+        // List of all commands in WebLang
+        const commandsData = [
+            { name: "TITULO", syntax: 'TITULO "texto";', html: '&lt;h1 class="glow-text"&gt;texto&lt;/h1&gt;', desc: "Genera el título principal de la página (equivalente a H1). Admite comillas para texto lineal.", cat: "text" },
+            { name: "ENCABEZADO", syntax: 'ENCABEZADO "texto";', html: '&lt;h2&gt;texto&lt;/h2&gt;', desc: "Genera un encabezado secundario de sección (equivalente a H2).", cat: "text" },
+            { name: "PARRAFO", syntax: 'PARRAFO "texto";', html: '&lt;p&gt;texto&lt;/p&gt;', desc: "Genera un bloque de párrafo estándar con formato y tipografía responsiva.", cat: "text" },
+            { name: "BOTON", syntax: 'BOTON "texto";', html: '&lt;button&gt;texto&lt;/button&gt;', desc: "Genera un botón interactivo de llamada a la acción estilizado según el tema elegido.", cat: "form" },
+            { name: "LISTA", syntax: 'LISTA { ELEMENTO "txt"; }', html: '&lt;ul&gt;&lt;li&gt;txt&lt;/li&gt;&lt;/ul&gt;', desc: "Abre una lista desordenada de elementos. Su interior debe albergar obligatoriamente comandos ELEMENTO.", cat: "block" },
+            { name: "ELEMENTO", syntax: 'ELEMENTO "texto"; ó ELEMENTO { ... }', html: '&lt;li&gt;texto&lt;/li&gt;', desc: "Declara un ítem de lista. Exige tener un padre LISTA (ul) en el tope de la pila.", cat: "block" },
+            { name: "SUBLISTA", syntax: 'SUBLISTA { ELEMENTO "txt"; }', html: '&lt;ul&gt;...&lt;/ul&gt;', desc: "Declara una lista anidada secundaria. Exige estar directamente dentro de un ELEMENTO (li).", cat: "block" },
+            { name: "NEGRILLA", syntax: 'NEGRILLA "texto";', html: '&lt;strong&gt;texto&lt;/strong&gt;', desc: "Da formato de énfasis fuerte o negrita al texto seleccionado.", cat: "text" },
+            { name: "CURSIVA", syntax: 'CURSIVA "texto";', html: '&lt;em&gt;texto&lt;/em&gt;', desc: "Aplica formato itálica o cursiva al texto lineal.", cat: "text" },
+            { name: "SUBRAYADO", syntax: 'SUBRAYADO "texto";', html: '&lt;u&gt;texto&lt;/u&gt;', desc: "Aplica un subrayado elegante al texto lineal.", cat: "text" },
+            { name: "CITA", syntax: 'CITA "texto";', html: '&lt;blockquote&gt;texto&lt;/blockquote&gt;', desc: "Genera un bloque de cita textual indentado y con borde de acento en el lateral izquierdo.", cat: "text" },
+            { name: "DIVISOR", syntax: 'DIVISOR;', html: '&lt;hr&gt;', desc: "Genera una línea divisoria horizontal sutil para separar contenidos. Es de tipo auto-cerrado (lleva punto y coma directo).", cat: "special" },
+            { name: "ENLACE", syntax: 'ENLACE "url" "Texto";', html: '&lt;a href="url"&gt;Texto&lt;/a&gt;', desc: "Genera un hipervínculo. Recibe dos parámetros de cadena: primero la URL y luego el texto a mostrar.", cat: "special" },
+            { name: "IMAGEN", syntax: 'IMAGEN "src" "Alt";', html: '&lt;img src="src" alt="Alt" /&gt;', desc: "Renderiza una imagen adaptativa. Recibe la URL del recurso y el texto alternativo de accesibilidad.", cat: "special" },
+            { name: "VIDEO", syntax: 'VIDEO "url" "Fallback";', html: '&lt;video src="url" controls&gt;Fallback&lt;/video&gt;', desc: "Inserta un reproductor de video HTML5. Recibe la URL del video y el texto de respaldo.", cat: "special" },
+            { name: "CONTENEDOR", syntax: 'CONTENEDOR { ... }', html: '&lt;div&gt;...&lt;/div&gt;', desc: "Contenedor de división genérico (Hijo de la raíz o de sí mismo) útil para agrupar layouts.", cat: "block" },
+            { name: "GRID", syntax: 'GRID { ... }', html: '&lt;div class="grid-layout"&gt;...&lt;/div&gt;', desc: "Abre una cuadrícula de distribución responsiva adaptable de 2 o más columnas.", cat: "block" },
+            { name: "COLUMNA", syntax: 'COLUMNA { ... }', html: '&lt;div&gt;...&lt;/div&gt;', desc: "Elemento de columna para estructuración. Exige estar dentro de un GRID.", cat: "block" },
+            { name: "CODIGO", syntax: 'CODIGO "texto";', html: '&lt;code&gt;texto&lt;/code&gt;', desc: "Muestra código fuente literal con espaciado y tipografía monoespacio.", cat: "text" },
+            { name: "PEQUENO", syntax: 'PEQUENO "texto";', html: '&lt;small&gt;texto&lt;/small&gt;', desc: "Genera texto de tamaño reducido, ideal para notas legales o advertencias al pie.", cat: "text" },
+            { name: "SPAN", syntax: 'SPAN "texto";', html: '&lt;span&gt;texto&lt;/span&gt;', desc: "Elemento en línea neutro para aplicar estilos de acento parciales.", cat: "text" },
+            { name: "SALTO", syntax: 'SALTO;', html: '&lt;br&gt;', desc: "Forza un salto de línea en el texto (Directiva auto-cerrada sin cadena).", cat: "special" },
+            { name: "FORMULARIO", syntax: 'FORMULARIO { ... }', html: '&lt;form&gt;...&lt;/form&gt;', desc: "Contenedor que agrupa controles de captura como entradas, áreas de texto y botones.", cat: "form" },
+            { name: "ENTRADA", syntax: 'ENTRADA "placeholder" "nombre";', html: '&lt;input placeholder="placeholder" name="nombre" class="modern-input" /&gt;', desc: "Input de texto interactivo. Recibe el texto de ayuda y el identificador de la variable del campo.", cat: "form" },
+            { name: "AREA_TEXTO", syntax: 'AREA_TEXTO "placeholder" "nombre";', html: '&lt;textarea placeholder="placeholder" name="nombre" class="modern-input"&gt;&lt;/textarea&gt;', desc: "Campo multirrenglón de entrada de texto.", cat: "form" },
+            { name: "TEXTO", syntax: 'TEXTO "texto";', html: '&lt;p&gt;texto&lt;/p&gt;', desc: "Comando equivalente a PARRAFO, añade texto de párrafo.", cat: "text" },
+            { name: "CONSULTA", syntax: 'CONSULTA { ... }', html: '&lt;div class="query-container"&gt;...&lt;/div&gt;', desc: "Contenedor de tarjeta informativa estructurada. Ideal para desplegar pares clave-valor.", cat: "data" },
+            { name: "FILTRO", syntax: 'FILTRO { ... }', html: '&lt;aside&gt;...&lt;/aside&gt;', desc: "Contenedor de filtros o barra lateral (aside) para consultas o búsquedas.", cat: "block" },
+            { name: "DATO", syntax: 'DATO "clave" "valor";', html: '&lt;div class="key-value-pair"&gt;&lt;span class="key"&gt;clave&lt;/span&gt;&lt;span class="value"&gt;valor&lt;/span&gt;&lt;/div&gt;', desc: "Inserta una dupla clave y valor formateada horizontalmente dentro de una CONSULTA.", cat: "data" },
+            { name: "TABLA", syntax: 'TABLA { FILA { ... } }', html: '&lt;table&gt;...&lt;/table&gt;', desc: "Estructura de grilla de datos tabulares tradicionales. Solo admite comandos FILA en su interior.", cat: "data" },
+            { name: "FILA", syntax: 'FILA { CELDA "txt"; }', html: '&lt;tr&gt;...&lt;/tr&gt;', desc: "Fila horizontal de tabla. Exige tener un padre TABLA (table) en la pila.", cat: "data" },
+            { name: "CELDA", syntax: 'CELDA "texto";', html: '&lt;td&gt;texto&lt;/td&gt;', desc: "Celda de tabla individual. Exige tener un padre FILA (tr) en la pila.", cat: "data" },
+            { name: "HERO", syntax: 'HERO { ... }', html: '&lt;section class="hero-banner"&gt;...&lt;/section&gt;', desc: "Bloque de cabecera visual llamativa e introductoria (Jumbotron) para promocionar contenido.", cat: "ui" },
+            { name: "MODAL", syntax: 'MODAL { ... }', html: '&lt;div class="modal-overlay"&gt;...&lt;/div&gt;', desc: "Caja de diálogo emergente suspendida sobre el documento.", cat: "ui" },
+            { name: "PROGRESO", syntax: 'PROGRESO "porcentaje" "max";', html: '&lt;div class="progress-container"&gt;&lt;div class="progress-bar" style="width: 50%"&gt;&lt;/div&gt;&lt;/div&gt;', desc: "Renderiza una barra de progreso. Recibe la cifra de porcentaje y la escala tope.", cat: "ui" },
+            { name: "CHIP", syntax: 'CHIP "texto";', html: '&lt;span class="chip"&gt;texto&lt;/span&gt;', desc: "Pequeña etiqueta o píldora de texto destacada para clasificaciones.", cat: "ui" },
+            { name: "AVATAR", syntax: 'AVATAR "url";', html: '&lt;img class="avatar" src="url" /&gt;', desc: "Renderiza una foto de perfil circular pequeña con bordes elegantes.", cat: "ui" },
+            { name: "INTERRUPTOR", syntax: 'INTERRUPTOR "texto";', html: '&lt;label class="toggle-switch"&gt;texto&lt;/label&gt;', desc: "Control interactivo de encendido/apagado (Toggle switch).", cat: "form" },
+            { name: "DESPLEGABLE", syntax: 'DESPLEGABLE { ... }', html: '&lt;select&gt;...&lt;/select&gt;', desc: "Menú de selección desplegable de opciones.", cat: "form" },
+            { name: "ICONO", syntax: 'ICONO "clase-icono";', html: '&lt;i class="icon"&gt;clase-icono&lt;/i&gt;', desc: "Inserta un icono visual. Recibe la clase identificadora (ej. fas fa-home).", cat: "ui" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Highlight scroll spy sidebar ---
+            const links = document.querySelectorAll('.sidebar-link');
+            const sections = document.querySelectorAll('section');
+
+            function highlightSection() {
+                let index = sections.length;
+                while(--index && window.scrollY + 140 < sections[index].offsetTop) {}
+                
+                links.forEach((link) => link.classList.remove('active'));
+                if (links[index]) {
+                    links[index].classList.add('active');
+                }
+            }
+
+            highlightSection();
+            window.addEventListener('scroll', highlightSection);
+
+            // --- Inicializar Detalles de Estado de Autómatas ---
+            showStateDetail('lexer', 'Q0');
+
+            // --- Cheat Sheet Filter and Search ---
+            const searchInput = document.getElementById('cmd-search-input');
+            const categorySelect = document.getElementById('cmd-category-select');
+            const cardsContainer = document.getElementById('command-cards-container');
+
+            function renderCommandCards() {
+                const query = searchInput.value.toLowerCase().trim();
+                const selectedCat = categorySelect.value;
+                
+                cardsContainer.innerHTML = '';
+                
+                const filtered = commandsData.filter(cmd => {
+                    const matchesSearch = cmd.name.toLowerCase().includes(query) || cmd.desc.toLowerCase().includes(query);
+                    const matchesCat = selectedCat === 'all' || cmd.cat === selectedCat;
+                    return matchesSearch && matchesCat;
+                });
+
+                if (filtered.length === 0) {
+                    cardsContainer.innerHTML = `
+                        <div class="col-span-full text-center py-8 text-slate-500 italic text-sm">
+                            No se encontraron comandos que coincidan con la búsqueda.
+                        </div>`;
+                    return;
+                }
+
+                filtered.forEach(cmd => {
+                    const card = document.createElement('div');
+                    card.className = "bg-slate-900/40 border border-white/5 p-6 rounded-2xl flex flex-col justify-between gap-4 hover:border-indigo-500/30 transition-all";
+                    
+                    const catBadgeColor = {
+                        block: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+                        text: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+                        special: "bg-pink-500/10 text-pink-400 border-pink-500/20",
+                        form: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+                        data: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+                        ui: "bg-purple-500/10 text-purple-400 border-purple-500/20"
+                    }[cmd.cat] || "bg-slate-500/10 text-slate-400";
+
+                    const catLabel = {
+                        block: "Bloque",
+                        text: "Texto",
+                        special: "Especial",
+                        form: "Formulario",
+                        data: "Datos",
+                        ui: "UI Avanzado"
+                    }[cmd.cat] || "Otros";
+
+                    card.innerHTML = `
+                        <div class="space-y-2">
+                            <div class="flex items-center justify-between">
+                                <h4 class="text-lg font-black text-indigo-300 font-mono">${cmd.name}</h4>
+                                <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${catBadgeColor}">${catLabel}</span>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed">${cmd.desc}</p>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sintaxis WebLang:</div>
+                            <div class="relative bg-slate-950 p-3 rounded-xl border border-white/5 flex items-center justify-between gap-2 overflow-hidden">
+                                <code class="text-xs text-cyan-300 font-mono">${cmd.syntax}</code>
+                                <button onclick="copyToClipboard('${cmd.syntax}', this)" class="bg-white/5 hover:bg-white/10 p-1.5 rounded-lg border border-white/5 transition-all text-slate-400 hover:text-white" title="Copiar sintaxis">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pt-1">HTML Generado:</div>
+                            <pre class="p-3 rounded-xl text-[10px] text-slate-400 font-mono overflow-x-auto">${cmd.html}</pre>
+                        </div>
+                    `;
+                    cardsContainer.appendChild(card);
+                });
+            }
+
+            // Bind filters
+            searchInput.addEventListener('input', renderCommandCards);
+            categorySelect.addEventListener('change', renderCommandCards);
+            renderCommandCards(); // Init trigger
+
+            // --- Interactive Simulator Logic ---
+            const simPresets = {
+                simple: `TITULO " Nebula Studio" ;
+PARRAFO "Compilando autómatas..." ;`,
+                lista: `LISTA {
+    ELEMENTO "Paso 1: LexerFA" ;
+    ELEMENTO "Paso 2: ParserPDA" ;
+}`,
+                error: `ELEMENTO "Este elemento fallará porque no hay LISTA padre" ;`
+            };
+
+            const simPresetSelect = document.getElementById('sim-preset-select');
+            const simCodeInput = document.getElementById('sim-code-input');
+            const simBtnStart = document.getElementById('sim-btn-start');
+            const simBtnNext = document.getElementById('sim-btn-next');
+            const simStatusMsg = document.getElementById('sim-status-msg');
+            const simLexerTokens = document.getElementById('sim-lexer-tokens');
+            const simStackContainer = document.getElementById('sim-stack-container');
+
+            // Set default preset
+            simCodeInput.value = simPresets.simple;
+            simPresetSelect.addEventListener('change', () => {
+                simCodeInput.value = simPresets[simPresetSelect.value];
+                resetSimulator();
+            });
+
+            let simTokens = [];
+            let simStepIndex = 0;
+            let simStack = ['#'];
+
+            function resetSimulator() {
+                simTokens = [];
+                simStepIndex = 0;
+                simStack = ['#'];
+                simBtnNext.disabled = true;
+                simStatusMsg.textContent = "Simulación inactiva. Presiona 'Iniciar Simulación'.";
+                simLexerTokens.innerHTML = `<span class="text-slate-500 italic">Inicia la simulación para ver los tokens...</span>`;
+                simStackContainer.innerHTML = '';
+            }
+
+            simBtnStart.addEventListener('click', () => {
+                const code = simCodeInput.value;
+                if (!code.trim()) {
+                    alert("Introduce algún fragmento de código para simular.");
+                    return;
+                }
+
+                // Simple frontend mock tokenizer for simulation demo
+                simTokens = mockTokenize(code);
+                simStepIndex = 0;
+                simStack = ['#'];
+                
+                // Render all tokens in Lexer window
+                simLexerTokens.innerHTML = '';
+                simTokens.forEach((tok, idx) => {
+                    const tokDiv = document.createElement('div');
+                    tokDiv.id = `sim-tok-${idx}`;
+                    tokDiv.className = "p-2 rounded border border-white/5 bg-slate-900 font-mono text-[11px] flex justify-between items-center transition-all";
+                    tokDiv.innerHTML = `
+                        <span class="font-bold text-cyan-300">${tok.type}</span>
+                        <span class="text-slate-400">"${tok.value}"</span>
+                    `;
+                    simLexerTokens.appendChild(tokDiv);
+                });
+
+                // Clear and render base stack
+                renderStackView();
+
+                simBtnNext.disabled = false;
+                simStatusMsg.textContent = "Simulación cargada. Presiona 'Siguiente Paso' para procesar el primer token.";
+                simStatusMsg.className = "text-xs text-cyan-400 font-bold";
+            });
+
+            simBtnNext.addEventListener('click', () => {
+                if (simStepIndex >= simTokens.length) {
+                    simStatusMsg.textContent = "¡Simulación finalizada! Todos los tokens han sido procesados.";
+                    simStatusMsg.className = "text-xs text-emerald-400 font-bold";
+                    simBtnNext.disabled = true;
+                    return;
+                }
+
+                // De-highlight previous token
+                if (simStepIndex > 0) {
+                    const prevTok = document.getElementById(`sim-tok-${simStepIndex - 1}`);
+                    if (prevTok) prevTok.classList.remove('sim-step-active');
+                }
+
+                // Highlight current token
+                const currTok = document.getElementById(`sim-tok-${simStepIndex}`);
+                if (currTok) currTok.classList.add('sim-step-active');
+
+                // Process token in parser stack
+                const token = simTokens[simStepIndex];
+                processTokenInSimulation(token);
+
+                simStepIndex++;
+            });
+
+            function processTokenInSimulation(token) {
+                let log = `Procesando: ${token.type} (${token.value}). `;
+                
+                if (token.type === 'COMANDO') {
+                    const cmd = token.value;
+                    const reqTop = { 'ELEMENTO': 'ul', 'SUBLISTA': 'li', 'FILA': 'table', 'CELDA': 'tr' }[cmd];
+                    
+                    // Stack validation
+                    if (reqTop) {
+                        const top = simStack[simStack.length - 1];
+                        if (top !== reqTop) {
+                            log += `❌ ERROR SEMÁNTICO (S001): El comando ${cmd} exige que en el tope de la pila esté '${reqTop}', pero está '${top}'.`;
+                            simStatusMsg.textContent = log;
+                            simStatusMsg.className = "text-xs text-rose-400 font-bold";
+                            simBtnNext.disabled = true;
+                            const currTok = document.getElementById(`sim-tok-${simStepIndex}`);
+                            if (currTok) {
+                                currTok.classList.remove('sim-step-active');
+                                currTok.classList.add('border-rose-500', 'bg-rose-950/20');
+                            }
+                            return;
+                        }
+                    }
+
+                    // PUSH rule simulation
+                    const pushTag = {
+                        'TITULO': 'h1', 'ENCABEZADO': 'h2', 'PARRAFO': 'p', 'BOTON': 'button',
+                        'LISTA': 'ul', 'SECCION': 'section', 'NAVEGACION': 'nav', 'PIE': 'footer',
+                        'ARTICULO': 'article', 'ELEMENTO': 'li', 'SUBLISTA': 'ul', 'CONTENEDOR': 'div',
+                        'GRID': 'div', 'COLUMNA': 'div', 'FORMULARIO': 'form', 'TABLA': 'table',
+                        'FILA': 'tr', 'CELDA': 'td', 'HERO': 'section'
+                    }[cmd];
+
+                    if (pushTag) {
+                        simStack.push(pushTag);
+                        log += `📥 PUSH: Se coloca '${pushTag}' en la pila.`;
+                    } else {
+                        log += `⚡ COMANDO Lineal: No altera la pila.`;
+                    }
+                } 
+                else if (token.type === 'PUNTOCOMA') {
+                    // Check if top is linear tag (like h1, h2, p, button) and POP it
+                    const top = simStack[simStack.length - 1];
+                    if (['h1', 'h2', 'p', 'button', 'li', 'td', 'a', 'video', 'textarea'].includes(top)) {
+                        simStack.pop();
+                        log += `📤 POP: Fin de directiva simple, se desapila '${top}'.`;
+                    } else {
+                        log += `⚡ Separador ';': No requiere acción de pila.`;
+                    }
+                } 
+                else if (token.type === 'LLAVE_C') {
+                    const top = simStack[simStack.length - 1];
+                    if (top && top !== '#') {
+                        simStack.pop();
+                        log += `📤 POP: Cierre de bloque '}', se desapila '${top}'.`;
+                    } else {
+                        log += `❌ Error: Intento de desapilar pila vacía.`;
+                    }
+                }
+                else {
+                    log += `Procesando contenido.`;
+                }
+
+                renderStackView();
+                simStatusMsg.textContent = log;
+                simStatusMsg.className = "text-xs text-cyan-300";
+            }
+
+            function renderStackView() {
+                simStackContainer.innerHTML = '';
+                // Render from top of stack to bottom
+                for (let i = simStack.length - 1; i >= 0; i--) {
+                    const tag = simStack[i];
+                    if (tag === '#') continue; // Don't render bottom mark in primary elements
+                    
+                    const plate = document.createElement('div');
+                    plate.className = "stack-item w-3/4 py-3 rounded-lg border border-violet-500/30 bg-violet-950/20 text-center font-bold text-xs text-violet-300 shadow-md relative";
+                    plate.innerHTML = `
+                        &lt;${tag}&gt;
+                        <span class="absolute top-1 right-2 text-[8px] text-slate-500 font-normal font-mono">Top - ${i}</span>
+                    `;
+                    simStackContainer.appendChild(plate);
+                }
+                
+                if (simStack.length === 1 && simStack[0] === '#') {
+                    simStackContainer.innerHTML = `<span class="text-slate-600 italic text-[11px] self-center py-8">Pila vacía (#)</span>`;
+                }
+            }
+
+            // Simple mock lexical analysis for simulator demonstration
+            function mockTokenize(code) {
+                const tokens = [];
+                // Simple regex-based token matching
+                const regex = /(\/\/.*)|("[^"]*")|([A-Z_]+)|(;)|(\{)|(\})|(\s+)/g;
+                let match;
+                let line = 1;
+
+                while ((match = regex.exec(code)) !== null) {
+                    if (match[1]) continue; // Comments
+                    if (match[7]) continue; // Whitespace
+                    
+                    if (match[2]) {
+                        tokens.push({ type: 'CADENA', value: match[2].replace(/"/g, '') });
+                    } else if (match[3]) {
+                        tokens.push({ type: 'COMANDO', value: match[3] });
+                    } else if (match[4]) {
+                        tokens.push({ type: 'PUNTOCOMA', value: ';' });
+                    } else if (match[5]) {
+                        tokens.push({ type: 'LLAVE_A', value: '{' });
+                    } else if (match[6]) {
+                        tokens.push({ type: 'LLAVE_C', value: '}' });
+                    }
+                }
+                return tokens;
+            }
+        });
+
+        // --- Interactive Automata Tab Toggling & State Inspector ---
+        function switchAutomataTab(tabId) {
+            const btnLexer = document.getElementById('btn-tab-lexer');
+            const btnParser = document.getElementById('btn-tab-parser');
+            const tabLexer = document.getElementById('tab-content-lexer');
+            const tabParser = document.getElementById('tab-content-parser');
+
+            if (tabId === 'lexer') {
+                btnLexer.className = "px-6 py-2.5 rounded-xl font-bold text-xs transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/35";
+                btnParser.className = "px-6 py-2.5 rounded-xl font-bold text-xs transition-all text-slate-400 hover:text-slate-200";
+                tabLexer.classList.remove('hidden');
+                tabParser.classList.add('hidden');
+                showStateDetail('lexer', 'Q0');
+            } else {
+                btnParser.className = "px-6 py-2.5 rounded-xl font-bold text-xs transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/35";
+                btnLexer.className = "px-6 py-2.5 rounded-xl font-bold text-xs transition-all text-slate-400 hover:text-slate-200";
+                tabParser.classList.remove('hidden');
+                tabLexer.classList.add('hidden');
+                showStateDetail('parser', 'Q0');
+            }
+        }
+
+        function showStateDetail(automata, stateId) {
+            // Highlight node
+            const nodes = document.querySelectorAll(`.${automata}-node`);
+            nodes.forEach(node => {
+                if (node.getAttribute('data-state') === stateId) {
+                    node.classList.add('active');
+                } else {
+                    node.classList.remove('active');
+                }
+            });
+
+            // Highlight edges related to this node
+            const edges = document.querySelectorAll(`.${automata}-edge`);
+            edges.forEach(edge => {
+                const edgeId = edge.getAttribute('data-edge');
+                if (edgeId.includes(stateId)) {
+                    edge.classList.add('active');
+                    edge.setAttribute('marker-end', `url(#${automata}-arrow-active)`);
+                } else {
+                    edge.classList.remove('active');
+                    edge.setAttribute('marker-end', `url(#${automata}-arrow)`);
+                }
+            });
+
+            // Update Detail Panel
+            const detailPanel = document.getElementById(`${automata}-state-details`);
+            
+            // Details dictionary
+            const details = {
+                lexer: {
+                    Q0: {
+                        name: "Q0 (Estado Inicial — Inicio de Lexema)",
+                        desc: "Es el punto de partida en el escaneo de cada nuevo token. Mientras se encuentra en este estado, el Lexer descarta espacios en blanco y saltos de línea para ignorar el formato visual e inicia la lectura del siguiente lexema significativo.",
+                        rules: [
+                            { input: "Letra / Guión Bajo (A-Z, a-z, _)", next: "Q1", op: "Inicia la acumulación de un comando" },
+                            { input: 'Comilla Doble (")', next: "Q2", op: "Inicia la lectura de una cadena de texto literal" },
+                            { input: "Punto y coma (;)", next: "Q7", op: "Reconoce separador lineal" },
+                            { input: "Llave Apertura ({)", next: "Q8", op: "Reconoce apertura de bloque de anidamiento" },
+                            { input: "Llave Cierre (})", next: "Q9", op: "Reconoce cierre de bloque" },
+                            { input: "Barra diagonal (/)", next: "Q4", op: "Inicia análisis de posible comentario" }
+                        ]
+                    },
+                    Q1: {
+                        name: "Q1 (Acumulador de Palabras Clave)",
+                        desc: "Se activa al leer una letra. Continúa absorbiendo caracteres alfanuméricos y guiones bajos. En cuanto lee un carácter fuera de este alfabeto, se dispara la aceptación del lexema acumulado y se valida contra el diccionario de comandos de WebLang.",
+                        rules: [
+                            { input: "Letra, Dígito, Guión Bajo", next: "Q1", op: "Sigue acumulando caracteres" },
+                            { input: "Cualquier otro carácter", next: "-2 (Aceptación)", op: "Emite token COMANDO; mantiene el carácter actual para la siguiente iteración" }
+                        ]
+                    },
+                    Q2: {
+                        name: "Q2 (Interior de Cadena Literal)",
+                        desc: "Captura el contenido de texto dentro de comillas dobles. Es un estado absorbente que acumula cualquier símbolo ASCII (incluyendo espacios, signos de puntuación) hasta que se encuentra la comilla de cierre. Los saltos de línea sin cerrar generan error léxico inmediato.",
+                        rules: [
+                            { input: 'Cualquier carácter excepto " o \\n', next: "Q2", op: "Acumula carácter en la cadena literal" },
+                            { input: 'Comilla Doble (")', next: "Q3", op: "Cierra la cadena de texto con éxito" },
+                            { input: "Salto de Línea (\\n)", next: "-1 (Error)", op: "Lanza error L001 (Cadena sin cerrar al cambiar de renglón)" }
+                        ]
+                    },
+                    Q3: {
+                        name: "Q3 (Cierre de Cadena Literal — Aceptación)",
+                        desc: "Estado de aceptación que se alcanza inmediatamente después de leer la comilla doble de cierre. Indica que el lexema es una cadena válida completa y emite el token correspondiente.",
+                        rules: [
+                            { input: "Cualquier carácter o EOF", next: "-2 (Aceptación)", op: "Emite token CADENA con el valor limpio (sin comillas)" }
+                        ]
+                    },
+                    Q4: {
+                        name: "Q4 (Prefijo de Comentario)",
+                        desc: "Estado de transición tras leer una barra diagonal `/`. El Lexer está a la espera de una segunda barra diagonal `/` para confirmar que se trata de un comentario lineal y descartar todo el renglón. Cualquier otro carácter genera error léxico.",
+                        rules: [
+                            { input: "Barra diagonal (/)", next: "Q5", op: "Confirma inicio de Comentario Lineal" },
+                            { input: "Cualquier otro carácter", next: "-1 (Error)", op: "Lanza error L001 (Uso inválido de barra diagonal)" }
+                        ]
+                    },
+                    Q5: {
+                        name: "Q5 (Ignorador de Comentario)",
+                        desc: "Estado absorbente que ignora silenciosamente cada carácter leído. Es utilizado para saltarse comentarios de código de una sola línea (iniciados con `//`). Permanece en este estado hasta que encuentra el fin de la línea.",
+                        rules: [
+                            { input: "Cualquier carácter excepto \\n", next: "Q5", op: "Descarta carácter" },
+                            { input: "Salto de Línea (\\n)", next: "Q0", op: "Finaliza comentario; retorna al estado inicial" }
+                        ]
+                    },
+                    Q7: {
+                        name: "Q7 (Aceptación de Punto y Coma)",
+                        desc: "Estado final alcanzado al leer `;`. Emite el token PUNTOCOMA, que indica al parser el fin de una instrucción simple.",
+                        rules: [
+                            { input: "Cualquier carácter o EOF", next: "-2 (Aceptación)", op: "Emite token PUNTOCOMA" }
+                        ]
+                    },
+                    Q8: {
+                        name: "Q8 (Aceptación de Llave de Apertura)",
+                        desc: "Estado de éxito para el bloque `{`. Genera el token LLAVE_A, permitiendo al compilador abrir una jerarquía o bloque de contención en la pila.",
+                        rules: [
+                            { input: "Cualquier carácter o EOF", next: "-2 (Aceptación)", op: "Emite token LLAVE_A" }
+                        ]
+                    },
+                    Q9: {
+                        name: "Q9 (Aceptación de Llave de Cierre)",
+                        desc: "Estado de éxito para el bloque `}`. Genera el token LLAVE_C, lo cual instruye al parser a cerrar el bloque actual desapilando de la pila del PDA.",
+                        rules: [
+                            { input: "Cualquier carácter o EOF", next: "-2 (Aceptación)", op: "Emite token LLAVE_C" }
+                        ]
+                    }
+                },
+                parser: {
+                    Q0: {
+                        name: "Q0 (Estado Base — Esperando Comando)",
+                        desc: "Es el estado fundamental del parser. Espera encontrar comandos que inicien un contenedor o una instrucción lineal simple. En este estado se gestionan las aperturas y cierres de bloques mediante llaves `{` y `}`.",
+                        rules: [
+                            { input: "COMANDO (ej. TITULO, LISTA)", next: "Q1 / Q0", op: "Si es lineal, transita a Q1. Si es de bloque, hace PUSH de la etiqueta a la pila y sigue en Q0." },
+                            { input: "LLAVE_C (})", next: "Q0", op: "Realiza un POP de la pila para cerrar la etiqueta HTML actual." },
+                            { input: "LLAVE_A ({)", next: "Q0", op: "No altera la pila; continúa esperando hijos." },
+                            { input: "EOF (Fin de Archivo)", next: "Q99 (Aceptación)", op: "Si la pila contiene solo '#' transita al estado de aceptación exitosa." }
+                        ]
+                    },
+                    Q1: {
+                        name: "Q1 (Esperando Valor de Directiva)",
+                        desc: "Se activa inmediatamente después de procesar un comando lineal (como `TITULO`, `PARRAFO` o `BOTON`). El parser entra en un estado suspendido esperando recibir la cadena de texto literal con comillas que servirá como contenido de la etiqueta.",
+                        rules: [
+                            { input: "CADENA (Texto literal)", next: "Q2", op: "Escribe el texto recibido dentro de la etiqueta abierta." },
+                            { input: "LLAVE_A ({)", next: "Q1", op: "Permite soportar bloques directamente si el comando lo admite." },
+                            { input: "COMANDO", next: "Q0", op: "Transita al inicio ante comandos auto-cerrados." }
+                        ]
+                    },
+                    Q2: {
+                        name: "Q2 (Directiva Procesada)",
+                        desc: "Se alcanza tras leer el valor de un comando. El compilador espera que la instrucción lineal termine oficialmente con un punto y coma `;`, o que continúe en un bloque de llaves si es necesario.",
+                        rules: [
+                            { input: "PUNTOCOMA (;)", next: "Q0", op: "Realiza un POP de la pila, cerrando formalmente la etiqueta HTML abierta (ej. emite </h1>)." },
+                            { input: "COMANDO", next: "Q0", op: "Maneja flujos secuenciales o autocerrados." }
+                        ]
+                    },
+                    Q3: {
+                        name: "Q3 (Comando Especial — Parámetro 1)",
+                        desc: "Este estado se activa al leer comandos que admiten parámetros dobles (como `ENLACE`, `IMAGEN`, `VIDEO`, `DATO`, `ENTRADA`). Q3 espera recibir la primera de las dos cadenas de texto obligatorias (por ejemplo, el enlace o URL del recurso).",
+                        rules: [
+                            { input: "CADENA (Primer parámetro)", next: "Q4", op: "Guarda temporalmente el valor del parámetro (ej. href) en el buffer." }
+                        ]
+                    },
+                    Q4: {
+                        name: "Q4 (Comando Especial — Parámetro 2)",
+                        desc: "Se activa tras almacenar el primer parámetro de un comando especial. Q4 espera la segunda cadena de texto obligatoria (como el texto del enlace o la descripción alternativo de la imagen).",
+                        rules: [
+                            { input: "CADENA (Segundo parámetro)", next: "Q2", op: "Genera el elemento HTML completo combinando ambos parámetros (ej. <a href='URL'>Texto</a>). Realiza PUSH a la pila si es elemento con cierre." }
+                        ]
+                    },
+                    Q5: {
+                        name: "Q5 (Gestión de Elemento de Lista)",
+                        desc: "Estado exclusivo para el comando `ELEMENTO`. Valida mediante el tope de la pila que el elemento esté dentro de un contenedor de lista válido (`ul` o `li` anterior para cierre implícito). Si es correcto, realiza el PUSH de `li` y transita para capturar el valor.",
+                        rules: [
+                            { input: "CADENA / COMANDO", next: "Q0", op: "Realiza PUSH de 'li' a la pila sintáctica y delega el flujo." }
+                        ]
+                    },
+                    Q99: {
+                        name: "Q99 (Finalización y Aceptación — EOF)",
+                        desc: "El estado terminal del compilador. Se alcanza tras recibir el token de Fin de Archivo (EOF). El parser comprueba que la pila sintáctica esté vacía (es decir, el tope es el marcador base `#`). Si es así, garantiza que no hay etiquetas sin cerrar y el HTML se renderiza con éxito.",
+                        rules: [
+                            { input: "Cualquier entrada", next: "Fin", op: "Finaliza y retorna la estructura HTML5 generada y estilizada." }
+                        ]
+                    }
+                }
+            };
+
+            const data = details[automata][stateId];
+            if (!data) return;
+
+            // Build transitions list
+            let trHtml = "";
+            data.rules.forEach(r => {
+                trHtml += `
+                    <div class="bg-slate-900 border border-white/5 p-3 rounded-xl space-y-1 font-mono text-[10px]">
+                        <div class="flex justify-between">
+                            <span class="text-indigo-400 font-bold">Input:</span>
+                            <span class="text-slate-300 font-semibold">${r.input}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-cyan-400 font-bold">Siguiente:</span>
+                            <span class="text-slate-300 font-semibold">${r.next}</span>
+                        </div>
+                        <div class="pt-1 text-[9.5px] text-slate-400 border-t border-white/5 mt-1 font-sans">
+                            ${r.op}
+                        </div>
+                    </div>
+                `;
+            });
+
+            detailPanel.innerHTML = `
+                <div class="animate__animated animate__fadeIn space-y-4">
+                    <div>
+                        <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${automata === 'lexer' ? 'border-cyan-500/20 bg-cyan-500/10 text-cyan-400' : 'border-purple-500/20 bg-purple-500/10 text-purple-400'} font-mono">Estado Activo</span>
+                        <h4 class="text-sm font-extrabold text-white mt-1.5 leading-snug">${data.name}</h4>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">${data.desc}</p>
+                    
+                    <div class="space-y-2">
+                        <h5 class="text-[10px] font-bold text-slate-300 uppercase tracking-widest pt-2">Transiciones y Comportamiento:</h5>
+                        <div class="grid grid-cols-1 gap-2.5 max-h-48 overflow-y-auto pr-1">
+                            ${trHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Quick copy functions
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text);
+            const originalIcon = btn.innerHTML;
+            btn.innerHTML = `
+                <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+                </svg>`;
+            setTimeout(() => btn.innerHTML = originalIcon, 1500);
+        }
+
+        function copyFullExample() {
+            const codeText = document.getElementById('full-example-code').textContent;
+            navigator.clipboard.writeText(codeText);
+            alert("Código de ejemplo copiado al portapapeles. ¡Pégalo en el Nebula Editor!");
+        }
+    </script>
+</body>
+</html>

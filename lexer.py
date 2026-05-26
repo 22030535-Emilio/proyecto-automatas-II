@@ -39,6 +39,15 @@ class LexerFA:
         self.CHAR_MAP[ord('\t')] = 7
         self.CHAR_MAP[ord('\r')] = 7
         self.CHAR_MAP[ord('\n')] = 9 
+        self.CHAR_MAP[ord('_')] = 0 # Tratar guion bajo como letra
+        self.CHAR_MAP[ord(':')] = 8 # Otros caracteres permitidos
+        self.CHAR_MAP[ord('.')] = 8
+        self.CHAR_MAP[ord('-')] = 8
+        self.CHAR_MAP[ord(',')] = 8
+        self.CHAR_MAP[ord('!')] = 8
+        self.CHAR_MAP[ord('?')] = 8
+        self.CHAR_MAP[ord('(')] = 8
+        self.CHAR_MAP[ord(')')] = 8
 
         # Matriz de Transiciones
         # Estados >= 0 son normales.

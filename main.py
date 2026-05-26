@@ -3,11 +3,11 @@ import os
 from lexer import LexerFA
 from parser_stack import ParserPDA
 from components import ErrorPile
-from errors import MiniWebError
+from errors import WebLangError
 
 def main():
     if len(sys.argv) < 2:
-        print("Uso: python main.py <archivo.mweb>")
+        print("Uso: python main.py <archivo.weblang>")
         return
 
     input_file = sys.argv[1]
@@ -44,7 +44,7 @@ def main():
             errors.print_errors()
         else:
             # 3. Guardar Resultado si no hay errores
-            output_file = input_file.replace('.mweb', '.html')
+            output_file = input_file.replace('.weblang', '.html')
             if output_file == input_file:
                 output_file += '.html'
                 

@@ -1,0 +1,73 @@
+// MiniWebLang NEBULA v5.0 (Query & Data Edition)
+// Demostración de Subconsultas Visuales y Vocabulario Expandido
+
+HERO {
+    AVATAR "https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff";
+    TITULO "Dashboard de Analítica";
+    CHIP "Sincronizado";
+    PARRAFO "Visualización de datos en tiempo real mediante subconsultas del autómata.";
+}
+
+NAVEGACION {
+    ICONO "home";
+    ENLACE "#" "Inicio";
+    ENLACE "#" "Reportes";
+    INTERRUPTOR "Modo Oscuro";
+}
+
+CONTENEDOR {
+    ENCABEZADO "Resumen de Operaciones";
+    
+    CONSULTA {
+        ENCABEZADO "Consulta Principal: Usuarios Activos";
+        PROGRESO "85" "100";
+        DATO "Total Usuarios" "1,240";
+        DATO "Crecimiento" "+15%";
+        
+        // Subconsulta Visual: Desglose por Región
+        CONSULTA {
+            ENCABEZADO "Subconsulta: Distribución Geográfica";
+            TABLA {
+                FILA {
+                    CELDA "Región";
+                    CELDA "Ventas";
+                    CELDA "Estado";
+                }
+                FILA {
+                    CELDA "Norteamérica";
+                    CELDA "$45,000";
+                    CELDA { CHIP "Alta"; }
+                }
+                FILA {
+                    CELDA "Europa";
+                    CELDA "$32,000";
+                    CELDA { CHIP "Media"; }
+                }
+            }
+        }
+    }
+    
+    SECCION {
+        ENCABEZADO "Parámetros de Búsqueda";
+        FILTRO {
+            PARRAFO "Filtrar por categoría:";
+            DESPLEGABLE {
+                // El autómata maneja elementos internos en el generador
+                PEQUENO "Selecciona una opción...";
+            }
+            BOTON "Aplicar Filtros";
+        }
+    }
+}
+
+MODAL {
+    ENCABEZADO "Alerta de Sistema";
+    PARRAFO "Se ha detectado una nueva entrada de datos en la subconsulta raíz.";
+    BOTON "Entendido";
+}
+
+PIE {
+    SPAN "Powered by MiniWebLang v5.0 Query Engine";
+    SALTO;
+    PEQUENO "2026 - Nebula Series";
+}

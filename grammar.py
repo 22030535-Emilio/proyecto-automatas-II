@@ -1,4 +1,4 @@
-# Definición de Tokens para MiniWebLang
+# Definición de Tokens para WebLang
 TOKENS = {
     'COMANDO': r'[A-Z]+',
     'CADENA': r'"[^"]*"',
